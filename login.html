@@ -1,0 +1,950 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- SEO Meta description -->
+    <meta name="description" content="Trade Forex/Binary Options with the best platform, on a wide selection of assets, with high payouts, lightning-fast order execution and get personal customer support around the clock, fast withdrawals and the expertise of industry leaders.">
+    <meta name="author" content="ThemeTags">
+
+    <meta name="twitter:card" content="summary"/>
+    <meta name="twitter:site" content="@BitboostInvest"/>
+    <meta name="twitter:title" content="Bitboost Investment Company - Trusted platform for trading cryptocurrency."/>
+    <meta name="twitter:description" content="Trade Forex/Binary Options with the best platform, on a wide selection of assets, with high payouts, lightning-fast order execution and get personal customer support around the clock, fast withdrawals and the expertise of industry leaders."/>
+    <meta name="twitter:creator" content="@BitboostInvest"/>
+    <meta name="twitter:image" content="../spaceship-fx.com/images/log.html"/>
+    <meta name="twitter:image:alt" content="Bitboost Investment Company is a Trusted platform for trading cryptocurrency."/>
+
+    <!-- Open Graph data -->
+    <meta property="og:title" content="Bitboost Investment Company - Trusted platform for trading cryptocurrency."/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:url" content="index.html"/>
+    <meta property="og:image" content="../spaceship-fx.com/images/log.html"/>
+    <meta property="og:description" content="Bitboost Investment Company - Trade Forex/Binary Options with the best platform, on a wide selection of assets, with high payouts, lightning-fast order execution and get personal customer support around the clock, fast withdrawals and the expertise of industry leaders."/> 
+    <meta property="og:site_name" content="Bitboost Investment Company"/>
+
+    <!--title-->
+    <title>Login | Bitboost Investment Company</title>
+
+    <!--favicon icon-->
+    <link rel="shortcut icon" type="image/x-icon" href="img/favicon.png">
+
+    <!--google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,500,600,700%7COpen+Sans:400,600&amp;display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!--Bootstrap css-->
+    <link rel="stylesheet" href="csst/bootstrap.min.css">
+    <!--Magnific popup css-->
+    <link rel="stylesheet" href="csst/magnific-popup.css">
+    <!--Themify icon css-->
+    <link rel="stylesheet" href="csst/themify-icons.css">
+    <!--Fontawesome icon css-->
+    <link rel="stylesheet" href="csst/all.min.css">
+    <!--animated css-->
+    <link rel="stylesheet" href="csst/animate.min.css">
+    <!--ytplayer css-->
+    <link rel="stylesheet" href="csst/jquery.mb.YTPlayer.min.css">
+    <!--Owl carousel css-->
+    <link rel="stylesheet" href="csst/owl.carousel.min.css">
+    <link rel="stylesheet" href="csst/owl.theme.default.min.css">
+    <!--custom css-->
+    <link rel="stylesheet" href="csst/style.css">
+    <!--responsive css-->
+    <link rel="stylesheet" href="csst/responsive.css">
+    <!--custom css-->
+    <link rel="stylesheet" href="csst/custom.css">
+
+    <!-- Add Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+
+    <style>
+        /* Global Styles */
+        :root {
+            --primary: #0a1f44;
+            --secondary: #e80566;
+            --accent: #1a2c79;
+            --light: #f8f9fa;
+            --dark: #121212;
+            --gray: #6c757d;
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            --gradient-reverse: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+            --shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            background: #f9f9f9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .main {
+            flex: 1;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+        }
+        
+        /* Header & Navigation */
+        header {
+            background: white;
+            box-shadow: var(--shadow);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        
+        .navbar {
+            padding: 15px 0;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .logo span {
+            color: var(--secondary);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 25px;
+            align-items: center;
+        }
+        
+        .nav-links a {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            position: relative;
+        }
+        
+        .nav-links a:hover {
+            color: var(--secondary);
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--secondary);
+            transition: var(--transition);
+        }
+        
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+        
+        .btn-nav {
+            background: var(--gradient);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 5px;
+            font-weight: 600;
+        }
+        
+        .btn-nav:hover {
+            background: var(--gradient-reverse);
+            color: white;
+            text-decoration: none;
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            padding: 150px 0 80px;
+            background: var(--gradient);
+            color: white;
+            text-align: center;
+        }
+        
+        .hero-section h1 {
+            color: white;
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .hero-section p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        /* Login Container */
+        .login-section {
+            padding: 60px 0 100px;
+        }
+        
+        .login-container {
+            max-width: 450px;
+            margin: -50px auto 0;
+            background: white;
+            border-radius: 15px;
+            box-shadow: var(--shadow);
+            padding: 40px;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-header h2 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+        
+        .login-header p {
+            color: var(--gray);
+        }
+        
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+        
+        .form-control:focus {
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 0.2rem rgba(232, 5, 102, 0.25);
+            outline: none;
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--gray);
+        }
+        
+        .input-with-icon input {
+            padding-left: 45px;
+        }
+        
+        .checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .checkbox input {
+            width: auto;
+        }
+        
+        .checkbox label {
+            margin-bottom: 0;
+            font-weight: normal;
+            color: var(--gray);
+        }
+        
+        /* Button */
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .btn-login:hover {
+            background: var(--gradient-reverse);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        .btn-login:active {
+            transform: translateY(0);
+        }
+        
+        /* Links */
+        .form-links {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        
+        .form-links a {
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .form-links a:hover {
+            text-decoration: underline;
+        }
+        
+        .register-link {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            color: var(--gray);
+        }
+        
+        .register-link a {
+            color: var(--secondary);
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Messages */
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            background: var(--light);
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--primary);
+            color: white;
+            margin-top: auto;
+        }
+        
+        .footer-top {
+            padding: 60px 0 30px;
+        }
+        
+        .footer-bottom {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px 0;
+            text-align: center;
+        }
+        
+        .footer-column h4 {
+            color: white;
+            margin-bottom: 20px;
+            font-size: 1.2rem;
+        }
+        
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+        
+        .contact-info li {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .contact-info i {
+            margin-right: 10px;
+            color: var(--secondary);
+            margin-top: 3px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-section {
+                padding: 130px 0 60px;
+            }
+            
+            .hero-section h1 {
+                font-size: 2.5rem;
+            }
+            
+            .login-container {
+                margin: -30px auto 0;
+                padding: 30px 20px;
+            }
+            
+            .nav-links {
+                gap: 15px;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+            
+            .form-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .logo {
+                font-size: 1.5rem;
+            }
+        }
+        
+        /* Password toggle */
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--gray);
+            z-index: 2;
+        }
+        
+        .password-toggle:hover {
+            color: var(--secondary);
+        }
+    </style>
+</head>
+
+<body>
+<!-- Google Translate Widget -->
+<div id="ytWidget" style="padding-top: 10px;"></div>
+<script src="../translate.yandex.net/website-widget/v1/widget5d1f.js?widgetId=ytWidget&amp;pageLang=en&amp;widgetTheme=dark&amp;autoMode=true" type="text/javascript"></script>
+
+<!--loader start-->
+<div id="preloader">
+    <div class="loader1">
+        <span><br><b>Bitboost Investment Company</b></span>
+    </div>
+</div>
+<!--loader end-->
+
+<!--header section start-->
+<header class="header">
+    <div class="container">
+        <nav class="navbar">
+            <a href="index-2.html" class="logo">Bitboost <span>Investment</span></a>
+            
+            <div class="nav-links">
+                <a href="index-2.html">Home</a>
+                <a href="index-2.html#about">About Us</a>
+                <a href="index-2.html#services">Services</a>
+                <a href="payouts.html">Live Payouts</a>
+                <a href="login.html" class="btn-nav">Login</a>
+                <a href="register.html" class="btn-nav" style="background: var(--secondary);">Register</a>
+            </div>
+        </nav>
+    </div>
+</header>
+<!--header section end-->
+
+<!--body content wrap start-->
+<div class="main">
+    <!--hero section start-->
+    <section class="hero-section">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Welcome Back</h1>
+                <p>Access your investment dashboard and manage your portfolio securely</p>
+            </div>
+        </div>
+    </section>
+    <!--hero section end-->
+
+    <!--login form section start-->
+    <section class="login-section">
+        <div class="container">
+            <div class="login-container">
+                <div class="login-header">
+                    <h2>Login to Your Account</h2>
+                    <p>Enter your credentials to access your dashboard</p>
+                </div>
+
+                <!-- Loading Indicator -->
+                <div class="loading" id="loading">
+                    <div class="spinner-border text-primary" role="status">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <p class="mt-2">Authenticating...</p>
+                </div>
+
+                <!-- Error Message -->
+                <div class="message error" id="errorMessage"></div>
+
+                <!-- Success Message -->
+                <div class="message success" id="successMessage"></div>
+
+                <!-- Login Form -->
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="email" class="form-control" placeholder="Enter your email address" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <div class="input-with-icon">
+                            <i class="fas fa-lock"></i>
+                            <input type="password" id="password" class="form-control" placeholder="Enter your password" required>
+                            <span class="password-toggle" id="passwordToggle">
+                                <i class="fas fa-eye"></i>
+                            </span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <div class="checkbox">
+                            <input type="checkbox" id="remember">
+                            <label for="remember">Remember me</label>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn-login">Login to Dashboard</button>
+                    
+                    <div class="form-links">
+                        <a href="forgot-password.html">Forgot Password?</a>
+                        <a href="resend-verification.html">Resend Verification</a>
+                    </div>
+                </form>
+                
+                <div class="register-link">
+                    Don't have an account? <a href="register.html">Create Account</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!--login form section end-->
+</div>
+<!--body content wrap end-->
+
+<!--footer section start-->
+<footer class="footer-section">
+    <!--footer top start-->
+    <div class="footer-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="row">
+                        <div class="col-md-4 col-sm-6">
+                            <div class="footer-column">
+                                <h4>QUICK LINKS</h4>
+                                <ul class="footer-links">
+                                    <li><a href="index-2.html">Home</a></li>
+                                    <li><a href="index-2.html#about">About Us</a></li>
+                                    <li><a href="index-2.html#services">Services</a></li>
+                                    <li><a href="https://beta.companieshouse.gov.uk/company/FC019163" target="_blank">Company Registration</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <div class="footer-column">
+                                <h4>FEATURES</h4>
+                                <ul class="footer-links">
+                                    <li><a>Security & Stability</a></li>
+                                    <li><a>Instant Effect</a></li>
+                                    <li><a>Customer Support</a></li>
+                                    <li><a>Low Fees</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="col-md-4 col-sm-6">
+                            <div class="footer-column">
+                                <h4>SERVICES</h4>
+                                <ul class="footer-links">
+                                    <li><a>Cryptocurrency Mining</a></li>
+                                    <li><a>Binary Options</a></li>
+                                    <li><a>Forex Trades</a></li>
+                                    <li><a>Indices, Metals, Stocks</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="footer-column">
+                        <h4>CONTACT US</h4>
+                        <ul class="contact-info">
+                            <li>
+                                <i class="fas fa-envelope"></i>
+                                <span>contact@bitboost-investment.com</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-headset"></i>
+                                <span>support@bitboost-investment.com</span>
+                            </li>
+                            <li>
+                                <i class="fas fa-phone"></i>
+                                <span>+14800056789</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--footer top end-->
+
+    <!--footer copyright start-->
+    <div class="footer-bottom">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <p class="copyright-text">Copyrights © 2025. All rights reserved by Bitboost Investment Company</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--footer copyright end-->
+</footer>
+<!--footer section end-->
+
+<!-- Firebase Configuration -->
+<script>
+    // Firebase Configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyCSiRsdiLgH8_EXG_SrNgSH3z3Yhxu-1tY",
+        authDomain: "walletsite.firebaseapp.com",
+        projectId: "walletsite-66a4a",
+        storageBucket: "walletsite.appspot.com",
+        messagingSenderId: "452022925867",
+        appId: "1:452022925867:android:ec41d7acf60f7b0444486e"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+</script>
+
+<!-- Login Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // DOM Elements
+        const loginForm = document.getElementById('loginForm');
+        const loading = document.getElementById('loading');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const passwordToggle = document.getElementById('passwordToggle');
+        const passwordInput = document.getElementById('password');
+
+        // Toggle password visibility
+        passwordToggle.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            this.innerHTML = type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
+        });
+
+        // Check for remembered email
+        const rememberedEmail = localStorage.getItem('rememberedEmail');
+        if (rememberedEmail) {
+            document.getElementById('email').value = rememberedEmail;
+            document.getElementById('remember').checked = true;
+        }
+
+        // Check if user is already logged in
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                try {
+                    // Check if user exists in Firestore
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        
+                        // Update last login time
+                        await db.collection('users').doc(user.uid).update({
+                            lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        
+                        // Create login transaction record
+                        await db.collection('transactions').add({
+                            userId: user.uid,
+                            type: 'login',
+                            description: 'User auto-logged in',
+                            status: 'completed',
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                        
+                        // Redirect to dashboard
+                        showSuccess('Welcome back! Redirecting to dashboard...');
+                        setTimeout(() => {
+                            window.location.href = 'dashboard.html';
+                        }, 1500);
+                    }
+                } catch (error) {
+                    console.error('Auto-login error:', error);
+                }
+            }
+        });
+
+        // Form submission handler
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const remember = document.getElementById('remember').checked;
+
+            // Validate inputs
+            if (!validateEmail(email)) {
+                showError('Please enter a valid email address.');
+                return;
+            }
+
+            if (password.length < 6) {
+                showError('Password must be at least 6 characters.');
+                return;
+            }
+
+            // Show loading
+            showLoading();
+
+            try {
+                // Set persistence based on "Remember me" checkbox
+                if (remember) {
+                    await auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+                    localStorage.setItem('rememberedEmail', email);
+                } else {
+                    await auth.setPersistence(firebase.auth.Auth.Persistence.SESSION);
+                    localStorage.removeItem('rememberedEmail');
+                }
+                
+                // Sign in with Firebase Auth
+                const userCredential = await auth.signInWithEmailAndPassword(email, password);
+                const user = userCredential.user;
+                
+                // Check if user exists in Firestore
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                
+                if (!userDoc.exists) {
+                    // User doesn't exist in Firestore (shouldn't happen)
+                    await auth.signOut();
+                    throw new Error('Account not found. Please register first.');
+                }
+                
+                const userData = userDoc.data();
+                
+                // Check if account is active
+                if (userData.status !== 'active') {
+                    await auth.signOut();
+                    throw new Error('Your account is not active. Please contact support.');
+                }
+                
+                // Update last login time
+                await db.collection('users').doc(user.uid).update({
+                    lastLogin: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // Create login transaction record
+                await db.collection('transactions').add({
+                    userId: user.uid,
+                    type: 'login',
+                    description: 'User logged in successfully',
+                    status: 'completed',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+                    ip: await getIPAddress()
+                });
+                
+                // Store user data in localStorage for quick access
+                localStorage.setItem('userUID', user.uid);
+                localStorage.setItem('userEmail', user.email);
+                localStorage.setItem('userName', userData.fullName || user.email.split('@')[0]);
+                localStorage.setItem('userRole', userData.accountType || 'user');
+                
+                // Check if email is verified
+                if (!user.emailVerified) {
+                    showSuccess('Login successful! Please verify your email address. Redirecting to dashboard...');
+                    // You can choose to redirect to verification page instead
+                    // window.location.href = 'verify-email.html';
+                } else {
+                    showSuccess('Login successful! Redirecting to dashboard...');
+                }
+                
+                // Redirect to dashboard after 2 seconds
+                setTimeout(() => {
+                    window.location.href = 'dashboard.html';
+                }, 1500);
+                
+            } catch (error) {
+                // Handle Firebase errors
+                let errorMsg = 'Login failed. ';
+                
+                switch (error.code) {
+                    case 'auth/invalid-email':
+                        errorMsg = 'Invalid email address format.';
+                        break;
+                    case 'auth/user-disabled':
+                        errorMsg = 'This account has been disabled. Please contact support.';
+                        break;
+                    case 'auth/user-not-found':
+                        errorMsg = 'No account found with this email. Please register first.';
+                        break;
+                    case 'auth/wrong-password':
+                        errorMsg = 'Incorrect password. Please try again.';
+                        break;
+                    case 'auth/too-many-requests':
+                        errorMsg = 'Too many failed login attempts. Please try again later or reset your password.';
+                        break;
+                    case 'auth/network-request-failed':
+                        errorMsg = 'Network error. Please check your internet connection.';
+                        break;
+                    default:
+                        errorMsg = error.message || 'An unknown error occurred.';
+                }
+                
+                showError(errorMsg);
+            } finally {
+                hideLoading();
+            }
+        });
+
+        // Helper functions
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+
+        async function getIPAddress() {
+            try {
+                const response = await fetch('https://api.ipify.org?format=json');
+                const data = await response.json();
+                return data.ip;
+            } catch (error) {
+                return 'unknown';
+            }
+        }
+
+        function showLoading() {
+            loading.classList.add('active');
+            loginForm.style.opacity = '0.5';
+            loginForm.style.pointerEvents = 'none';
+        }
+
+        function hideLoading() {
+            loading.classList.remove('active');
+            loginForm.style.opacity = '1';
+            loginForm.style.pointerEvents = 'auto';
+        }
+
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+            successMessage.style.display = 'none';
+            errorMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        function showSuccess(message) {
+            successMessage.textContent = message;
+            successMessage.style.display = 'block';
+            errorMessage.style.display = 'none';
+            successMessage.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // Enter key to submit form
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' && !loading.classList.contains('active')) {
+                const emailInput = document.getElementById('email');
+                const passwordInput = document.getElementById('password');
+                if (document.activeElement === emailInput || document.activeElement === passwordInput) {
+                    loginForm.dispatchEvent(new Event('submit'));
+                }
+            }
+        });
+
+        // Hide preloader
+        setTimeout(() => {
+            document.getElementById('preloader').style.display = 'none';
+        }, 1000);
+    });
+</script>
+
+<!-- Your existing scripts -->
+<script src="jst/jquery-3.4.1.min.js"></script>
+<script src="jst/popper.min.js"></script>
+<script src="jst/bootstrap.min.js"></script>
+<script src="jst/jquery.magnific-popup.min.js"></script>
+<script src="jst/jquery.easing.min.js"></script>
+<script src="jst/jquery.mb.YTPlayer.min.js"></script>
+<script src="jst/mixitup.min.js"></script>
+<script src="jst/wow.min.js"></script>
+<script src="jst/owl.carousel.min.js"></script>
+<script src="jst/jquery.countdown.min.js"></script>
+<script src="jst/scripts.js"></script>
+
+</body>
+</html>

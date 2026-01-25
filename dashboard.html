@@ -1,0 +1,2494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SpaceshipFX Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- TradingView Charting Library -->
+    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+    <!-- Add Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        }
+        
+        :root {
+            --primary: #3b82f6;
+            --transparent:var(--transparent);
+            --primary-dark: #2563eb;
+            --secondary: #8b5cf6;
+            --dark-bg: #0f172a;
+            --card-bg: #1e293b;
+            --border: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #0ea5e9;
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+            font-size: 14px;
+        }
+        
+        /* Mobile Menu Toggle Button */
+        .mobile-menu-toggle {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1001;
+            background: var(--transparent);
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+            border: none;
+        }
+        
+        .mobile-menu-toggle span {
+            display: block;
+            width: 20px;
+            height: 2px;
+            background: white;
+            margin: 2.5px 0;
+            transition: 0.3s;
+            border-radius: 1px;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            background-color: var(--card-bg);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            padding: 15px 0;
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--border);
+            z-index: 1000;
+            overflow-y: auto;
+            overflow-x: hidden;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .logo-area {
+            padding: 0 15px 15px;
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 15px;
+        }
+        
+        .logo {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .logo i {
+            color: var(--secondary);
+            font-size: 20px;
+        }
+        
+        .user-info {
+            padding: 0 15px;
+            margin-bottom: 20px;
+        }
+        
+        .user-info h1 {
+            font-size: 16px;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+        
+        .user-info p {
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+        
+        .main-menu, .other-menu {
+            padding: 0 8px;
+        }
+        
+        .menu-section {
+            margin-bottom: 20px;
+        }
+        
+        .menu-section h2 {
+            font-size: 11px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            padding-left: 8px;
+            font-weight: 600;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            transition: all 0.2s;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            background: none;
+            border: none;
+            width: 100%;
+            text-align: left;
+        }
+        
+        .menu-item:hover, .menu-item.active {
+            background-color: rgba(51, 65, 85, 0.6);
+            color: var(--text-primary);
+        }
+        
+        .menu-item i {
+            width: 18px;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        /* Progress Bar Styles */
+        .progress-container {
+            margin-top: 8px;
+            width: 100%;
+        }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 3px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+            position: relative;
+        }
+        
+        .progress-fill.withdrawal {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        
+        .progress-fill.balance {
+            background: linear-gradient(90deg, var(--success), #34d399);
+        }
+        
+        .progress-fill.investment {
+            background: linear-gradient(90deg, var(--warning), #fbbf24);
+        }
+        
+        .progress-fill.bonus {
+            background: linear-gradient(90deg, var(--info), #38bdf8);
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            margin-left: 280px;
+            padding: 15px;
+            min-height: 100vh;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            max-width: 100%;
+            overflow-x: hidden;
+            padding-bottom: 80px; /* Space for bottom navigation */
+        }
+        
+        .header {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .search-bar {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            width: 100%;
+            max-width: 300px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            width: 100%;
+            outline: none;
+            font-size: 13px;
+        }
+        
+        .search-bar i {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        .content-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Dashboard Styles */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stat-card h3 {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+        
+        .stat-amount {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        
+        .stat-desc {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+        
+        .stat-goal {
+            font-size: 10px;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+        
+        /* TradingView Chart Container */
+        .tv-chart-container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+            height: 500px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tv-chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .tv-chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .tv-chart-controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .tv-chart-pair {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: var(--dark-bg);
+            border-radius: 8px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .tv-chart-pair i {
+            color: var(--secondary);
+        }
+        
+        .tv-chart-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .tv-action-btn {
+            padding: 6px 12px;
+            background: var(--dark-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .tv-action-btn:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--primary);
+        }
+        
+        .tv-action-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+        
+        #tv-chart {
+            width: 100%;
+            height: calc(100% - 60px);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        /* Market Data Grid */
+        .market-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .market-card {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border);
+        }
+        
+        .market-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .market-card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .market-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        
+        .market-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: var(--dark-bg);
+            border-radius: 8px;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        
+        .market-item:hover {
+            background: rgba(59, 130, 246, 0.1);
+            transform: translateY(-1px);
+        }
+        
+        .market-pair {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .pair-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .pair-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .pair-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+        
+        .pair-fullname {
+            font-size: 11px;
+            color: var(--text-secondary);
+        }
+        
+        .market-price {
+            text-align: right;
+        }
+        
+        .current-price {
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+        
+        .price-change {
+            font-size: 12px;
+            font-weight: 500;
+        }
+        
+        .positive {
+            color: var(--success);
+        }
+        
+        .negative {
+            color: var(--danger);
+        }
+        
+        /* Watchlist */
+        .watchlist {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .watchlist h3 {
+            font-size: 16px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 300px;
+        }
+        
+        th {
+            text-align: left;
+            padding: 10px 0;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        td {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+        
+        /* Form Styles */
+        .form-container {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .form-container h2 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        .form-container p {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--text-secondary);
+            font-weight: 500;
+            font-size: 13px;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--dark-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: border 0.2s;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 20px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+        
+        /* Transaction History */
+        .transaction-table {
+            background-color: var(--card-bg);
+            border-radius: 12px;
+            padding: 16px;
+            border: 1px solid var(--border);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        
+        .transaction-table h2 {
+            margin-bottom: 16px;
+            color: var(--text-primary);
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 15px;
+            color: var(--text-muted);
+            font-size: 12px;
+            margin-top: 20px;
+            border-top: 1px solid var(--border);
+        }
+        
+        /* Mobile Bottom Navigation */
+        .mobile-bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--card-bg);
+            padding: 10px 15px 5px;
+            border-top: 1px solid var(--border);
+            z-index: 999;
+            display: none;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+        }
+        
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 5px;
+            justify-items: center;
+        }
+        
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-secondary);
+            font-size: 10px;
+            gap: 3px;
+            padding: 8px 5px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            min-width: 0;
+            text-align: center;
+        }
+        
+        .nav-item.active {
+            color: var(--primary);
+            background: rgba(59, 130, 246, 0.1);
+        }
+        
+        .nav-item i {
+            font-size: 18px;
+            margin-bottom: 2px;
+        }
+        
+        .nav-item span {
+            font-size: 10px;
+            line-height: 1.1;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+        
+        /* Mobile Header */
+        .mobile-header {
+            display: flex;
+            padding: 12px 15px;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border);
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 990;
+            display: none;
+        }
+        
+        .mobile-header .logo {
+            font-size: 16px;
+        }
+        
+        .mobile-header .user-short {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-size: 13px;
+            background: rgba(59, 130, 246, 0.2);
+            padding: 5px 10px;
+            border-radius: 6px;
+            min-width: 35px;
+            text-align: center;
+        }
+        
+        /* Mobile Styles */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 240px;
+            }
+            
+            .main-content {
+                margin-left: 240px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .tv-chart-container {
+                height: 400px;
+            }
+            
+            .market-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-toggle {
+                display: flex;
+            }
+            
+            .mobile-header {
+                display: flex;
+            }
+            
+            .sidebar {
+                transform: translateX(-100%);
+                width: 85%;
+                max-width: 300px;
+                box-shadow: 5px 0 25px rgba(0, 0, 0, 0.3);
+                padding-top: 60px;
+                height: 100%;
+            }
+            
+            .sidebar.mobile-open {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+                padding: 0 15px 80px;
+                padding-top: 60px;
+            }
+            
+            .header {
+                display: none;
+            }
+            
+            .search-bar {
+                max-width: 100%;
+                margin-top: 10px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .tv-chart-container {
+                height: 350px;
+                padding: 12px;
+            }
+            
+            .tv-chart-header {
+                flex-direction: column;
+                gap: 10px;
+                align-items: flex-start;
+            }
+            
+            .tv-chart-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .market-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .chart-container, .watchlist, .form-container, .transaction-table {
+                margin: 15px 0;
+                padding: 15px;
+            }
+            
+            .footer {
+                margin: 15px 0;
+                padding: 15px 0;
+            }
+            
+            /* Mobile Bottom Navigation visible on mobile */
+            .mobile-bottom-nav {
+                display: block;
+            }
+            
+            /* Overlay when sidebar is open */
+            .sidebar-overlay {
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: rgba(0, 0, 0, 0.7);
+                z-index: 999;
+                display: none;
+                backdrop-filter: blur(2px);
+            }
+            
+            .sidebar-overlay.active {
+                display: block;
+                animation: fadeIn 0.2s ease;
+            }
+            
+            /* Adjust font sizes for mobile */
+            .stat-amount {
+                font-size: 18px;
+            }
+            
+            .form-container h2 {
+                font-size: 18px;
+            }
+            
+            .tv-chart-title {
+                font-size: 16px;
+            }
+            
+            .watchlist h3 {
+                font-size: 15px;
+            }
+            
+            .transaction-table h2 {
+                font-size: 16px;
+            }
+            
+            /* Mobile-specific search bar */
+            .mobile-search {
+                display: flex;
+                padding: 10px 15px;
+                background: var(--card-bg);
+                border-bottom: 1px solid var(--border);
+            }
+        }
+        
+        /* Mobile Search Bar */
+        .mobile-search {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-search {
+                display: flex;
+            }
+        }
+        
+        /* Loading States */
+        .loading {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .loading::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            animation: loading 1.5s infinite;
+        }
+        
+        @keyframes loading {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        /* Status Indicators */
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .status-completed {
+            background: rgba(16, 185, 129, 0.2);
+            color: var(--success);
+        }
+        
+        .status-pending {
+            background: rgba(245, 158, 11, 0.2);
+            color: var(--warning);
+        }
+        
+        .status-failed {
+            background: rgba(239, 68, 68, 0.2);
+            color: var(--danger);
+        }
+        
+        /* Additional Sections Styles */
+        #transfer, #withdrawal, #logout {
+            animation: fadeIn 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Firebase Configuration -->
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCSiRsdiLgH8_EXG_SrNgSH3z3Yhxu-1tY",
+            authDomain: "walletsite.firebaseapp.com",
+            projectId: "walletsite-66a4a",
+            storageBucket: "walletsite.appspot.com",
+            messagingSenderId: "452022925867",
+            appId: "1:452022925867:android:ec41d7acf60f7b0444486e"
+        };
+
+        // Initialize Firebase
+        let auth, db;
+        try {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            auth = firebase.auth();
+            db = firebase.firestore();
+            console.log('Firebase initialized successfully');
+        } catch (error) {
+            console.error('Firebase initialization error:', error);
+        }
+    </script>
+
+    <!-- Mobile Menu Toggle -->
+    <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+    
+    <!-- Mobile Header -->
+    <div class="mobile-header">
+        <div class="logo">
+            <i class="fas fa-rocket"></i>
+            <span>bitboost-investment/span>
+        </div>
+        <div class="user-short" id="userInitials">U</div>
+    </div>
+    
+    <!-- Mobile Search Bar -->
+    <div class="mobile-search">
+        <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Search trading pairs...">
+        </div>
+    </div>
+    
+    <!-- Sidebar Overlay for Mobile -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo-area">
+            <div class="logo">
+                <i class="fas fa-rocket"></i>
+                <span>bitboost-investment</span>
+            </div>
+        </div>
+        
+        <div class="user-info">
+            <h1 id="userGreeting">Hello! Loading...</h1>
+            <p>Welcome back to your dashboard</p>
+        </div>
+        
+        <div class="main-menu">
+            <div class="menu-section">
+                <h2>MAIN</h2>
+                <button class="menu-item active" data-section="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>Dashboard</span>
+                </button>
+                <button class="menu-item" data-section="invest">
+                    <i class="fas fa-chart-line"></i>
+                    <span>Invest</span>
+                </button>
+                <button class="menu-item" data-section="reinvest">
+                    <i class="fas fa-redo"></i>
+                    <span>Reinvest</span>
+                </button>
+                <button class="menu-item" data-section="transfer">
+                    <i class="fas fa-exchange-alt"></i>
+                    <span>Fund Transfer</span>
+                </button>
+                <button class="menu-item" data-section="withdrawal">
+                    <i class="fas fa-wallet"></i>
+                    <span>Withdrawal</span>
+                </button>
+                <button class="menu-item" data-section="profile">
+                    <i class="fas fa-user"></i>
+                    <span>Profile</span>
+                </button>
+                <button class="menu-item" data-section="history">
+                    <i class="fas fa-history"></i>
+                    <span>History</span>
+                </button>
+                <button class="menu-item" data-section="logout">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="other-menu">
+            <div class="menu-section">
+                <h2>TRADING</h2>
+                <button class="menu-item">
+                    <i class="fas fa-chart-candlestick"></i>
+                    <span>Trade Crypto</span>
+                </button>
+                <button class="menu-item">
+                    <i class="fas fa-money-bill-wave"></i>
+                    <span>Trade Forex</span>
+                </button>
+                <button class="menu-item">
+                    <i class="fas fa-chart-bar"></i>
+                    <span>Market Analysis</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Header with Search Bar -->
+        <div class="header">
+            <div class="search-bar">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search transactions, markets...">
+            </div>
+        </div>
+        
+        <!-- Dashboard Section (Default Active) -->
+        <div id="dashboard" class="content-section active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3>Total Withdrawal</h3>
+                    <div class="stat-amount" id="totalWithdrawal">$0.00</div>
+                    <div class="stat-desc">All received bonuses</div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Current</span>
+                            <span>Goal: $3,000</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill withdrawal" style="width: 0%" id="withdrawalProgress"></div>
+                        </div>
+                    </div>
+                    <div class="stat-goal">Progress: 0% of target</div>
+                </div>
+                
+                <div class="stat-card">
+                    <h3>Available Balance</h3>
+                    <div class="stat-amount" id="availableBalance">$0.00</div>
+                    <div class="stat-desc">Your withdrawable balance</div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Current</span>
+                            <span>Goal: $50,000</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill balance" style="width: 0%" id="balanceProgress"></div>
+                        </div>
+                    </div>
+                    <div class="stat-goal">Progress: 0% of target</div>
+                </div>
+                
+                <div class="stat-card">
+                    <h3>Active Investment</h3>
+                    <div class="stat-amount" id="activeInvestment">$0.00</div>
+                    <div class="stat-desc">Your currently running investment</div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Current</span>
+                            <span>Goal: $10,000</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill investment" style="width: 0%" id="investmentProgress"></div>
+                        </div>
+                    </div>
+                    <div class="stat-goal">Progress: 0% of target</div>
+                </div>
+                
+                <div class="stat-card">
+                    <h3>Total Bonuses</h3>
+                    <div class="stat-amount" id="totalBonuses">$0.00</div>
+                    <div class="stat-desc">All received bonuses</div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Current</span>
+                            <span>Goal: $1,000</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill bonus" style="width: 0%" id="bonusProgress"></div>
+                        </div>
+                    </div>
+                    <div class="stat-goal">Progress: 0% of target</div>
+                </div>
+            </div>
+            
+            <!-- TradingView Chart -->
+            <div class="tv-chart-container">
+                <div class="tv-chart-header">
+                    <div class="tv-chart-title">Live Market Chart</div>
+                    <div class="tv-chart-controls">
+                        <div class="tv-chart-pair">
+                            <i class="fab fa-bitcoin"></i>
+                            <span id="currentPair">BTC/USD</span>
+                        </div>
+                        <div class="tv-chart-actions">
+                            <button class="tv-action-btn active" data-interval="1">1m</button>
+                            <button class="tv-action-btn" data-interval="5">5m</button>
+                            <button class="tv-action-btn" data-interval="15">15m</button>
+                            <button class="tv-action-btn" data-interval="60">1h</button>
+                            <button class="tv-action-btn" data-interval="240">4h</button>
+                        </div>
+                    </div>
+                </div>
+                <div id="tv-chart"></div>
+            </div>
+            
+            <!-- Market Data Grid -->
+            <div class="market-grid">
+                <!-- Cryptocurrencies -->
+                <div class="market-card">
+                    <div class="market-card-header">
+                        <div class="market-card-title">Cryptocurrencies</div>
+                        <div class="price-change positive">+1.24%</div>
+                    </div>
+                    <div class="market-list">
+                        <div class="market-item" data-pair="BTCUSD">
+                            <div class="market-pair">
+                                <div class="pair-icon">
+                                    <i class="fab fa-bitcoin"></i>
+                                </div>
+                                <div class="pair-info">
+                                    <div class="pair-name">BTC/USD</div>
+                                    <div class="pair-fullname">Bitcoin / US Dollar</div>
+                                </div>
+                            </div>
+                            <div class="market-price">
+                                <div class="current-price">$89,607.32</div>
+                                <div class="price-change positive">+0.84%</div>
+                            </div>
+                        </div>
+                        <div class="market-item" data-pair="ETHUSD">
+                            <div class="market-pair">
+                                <div class="pair-icon">
+                                    <i class="fab fa-ethereum"></i>
+                                </div>
+                                <div class="pair-info">
+                                    <div class="pair-name">ETH/USD</div>
+                                    <div class="pair-fullname">Ethereum / US Dollar</div>
+                                </div>
+                            </div>
+                            <div class="market-price">
+                                <div class="current-price">$2,943.15</div>
+                                <div class="price-change negative">-0.32%</div>
+                            </div>
+                        </div>
+                        <div class="market-item" data-pair="SOLUSD">
+                            <div class="market-pair">
+                                <div class="pair-icon">SOL</div>
+                                <div class="pair-info">
+                                    <div class="pair-name">SOL/USD</div>
+                                    <div class="pair-fullname">Solana / US Dollar</div>
+                                </div>
+                            </div>
+                            <div class="market-price">
+                                <div class="current-price">$182.47</div>
+                                <div class="price-change positive">+2.15%</div>
+                            </div>
+                        </div>
+                        <div class="market-item" data-pair="XRPUSD">
+                            <div class="market-pair">
+                                <div class="pair-icon">XRP</div>
+                                <div class="pair-info">
+                                    <div class="pair-name">XRP/USD</div>
+                                    <div class="pair-fullname">Ripple / US Dollar</div>
+                                </div>
+                            </div>
+                            <div class="market-price">
+                                <div class="current-price">$0.5124</div>
+                                <div class="price-change positive">+0.45%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Forex Pairs -->
+                <div class="market-card">
+                    <div class="market-card-header">
+                        <div class="market-card-title">Forex Pairs</div>
+                        <div class="price-change negative">-0.18%</div>
+                    </div>
+                    <div class="market-list">
+                        <div class="market-item" data-pair="EURUSD">
+                            <div class="market-pair">
+                                <div class="pair-icon">€/$</div>
+                                <div class="pair-info">
+                                    <div class="pair-name">EUR/USD</div>
+                                    <div class="pair-fullname">Euro / US Dollar</div>
+                                </div>
+                            </div>
+                            <div class="market-price">
+                                <div class="current-price">1.1742</div>
+                                <div class="price-change positive">+0.14%</div>
+                            </div>
+                        </div>
+                        <div class="market-item" data-pair="GBPUSD">
+                            <div class="market-pair">
+                                <div class="pair-icon">£/$</div>
+                                <div class="pair-info">
+                                    <div class="pair-name">GBP/USD</div>
+                                    <div class="pair-fullname">British Pound / US Dollar</div>
+                                </div>
+                            </div>
+                            <div class="market-price">
+                                <div class="current-price">1.3485</div>
+                                <div class="price-change negative">-0.13%</div>
+                            </div>
+                        </div>
+                        <div class="market-item" data-pair="USDJPY">
+                            <div class="market-pair">
+                                <div class="pair-icon">$/¥</div>
+                                <div class="pair-info">
+                                    <div class="pair-name">USD/JPY</div>
+                                    <div class="pair-fullname">US Dollar / Japanese Yen</div>
+                                </div>
+                            </div>
+                            <div class="market-price">
+                                <div class="current-price">154.28</div>
+                                <div class="price-change positive">+0.22%</div>
+                            </div>
+                        </div>
+                        <div class="market-item" data-pair="AUDUSD">
+                            <div class="market-pair">
+                                <div class="pair-icon">A$/$</div>
+                                <div class="pair-info">
+                                    <div class="pair-name">AUD/USD</div>
+                                    <div class="pair-fullname">Australian Dollar / US Dollar</div>
+                                </div>
+                            </div>
+                            <div class="market-price">
+                                <div class="current-price">0.6851</div>
+                                <div class="price-change positive">+0.17%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Watchlist Table -->
+            <div class="watchlist">
+                <h3>Top Gainers & Losers</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Symbol</th>
+                            <th>Last Price</th>
+                            <th>24h Change</th>
+                            <th>24h Volume</th>
+                            <th>Market Cap</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>BTC/USD</strong></td>
+                            <td>$89,607.32</td>
+                            <td class="positive">+0.84%</td>
+                            <td>$32.4B</td>
+                            <td>$1.76T</td>
+                        </tr>
+                        <tr>
+                            <td><strong>ETH/USD</strong></td>
+                            <td>$2,943.15</td>
+                            <td class="negative">-0.32%</td>
+                            <td>$14.2B</td>
+                            <td>$353.2B</td>
+                        </tr>
+                        <tr>
+                            <td><strong>SOL/USD</strong></td>
+                            <td>$182.47</td>
+                            <td class="positive">+2.15%</td>
+                            <td>$3.8B</td>
+                            <td>$81.2B</td>
+                        </tr>
+                        <tr>
+                            <td><strong>XRP/USD</strong></td>
+                            <td>$0.5124</td>
+                            <td class="positive">+0.45%</td>
+                            <td>$1.2B</td>
+                            <td>$28.1B</td>
+                        </tr>
+                        <tr>
+                            <td><strong>EUR/USD</strong></td>
+                            <td>1.1742</td>
+                            <td class="positive">+0.14%</td>
+                            <td>$142.8B</td>
+                            <td>-</td>
+                        </tr>
+                        <tr>
+                            <td><strong>GBP/USD</strong></td>
+                            <td>1.3485</td>
+                            <td class="negative">-0.13%</td>
+                            <td>$98.7B</td>
+                            <td>-</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Reinvest Section -->
+        <div id="reinvest" class="content-section">
+            <div class="form-container">
+                <h2>Reinvest Funds</h2>
+                <p>You can request a reinvestment of your available balance by filling the reinvestment form below. Funds will be reinvested automatically.</p>
+                
+                <div class="form-group">
+                    <label>Current Investment Type</label>
+                    <div class="stat-amount" id="reinvestAmount">$0.00</div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Current</span>
+                            <span>Goal: $10,000</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill investment" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="coin">Choose Coin</label>
+                    <select id="coin" class="form-control">
+                        <option>Select Coin</option>
+                        <option>Bitcoin (BTC)</option>
+                        <option>Ethereum (ETH)</option>
+                        <option>USD Coin (USDC)</option>
+                        <option>Tether (USDT)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="plan">Reinvestment Package</label>
+                    <select id="plan" class="form-control">
+                        <option>Select Plan</option>
+                        <option>Basic Plan - 5% monthly</option>
+                        <option>Advanced Plan - 8% monthly</option>
+                        <option>Premium Plan - 12% monthly</option>
+                        <option>VIP Plan - 18% monthly</option>
+                    </select>
+                </div>
+                
+                <button class="btn" id="reinvestBtn">Reinvest Funds</button>
+            </div>
+        </div>
+        
+        <!-- Profile Section -->
+        <div id="profile" class="content-section">
+            <div class="form-container">
+                <h2>General Information</h2>
+                <p>You can help us, by filling your data, create you a much better experience using our website.</p>
+                
+                <h3 style="margin-bottom: 16px; color: var(--text-secondary); font-size: 15px;">Profile Settings</h3>
+                
+                <div class="form-group">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" class="form-control" value="" placeholder="Enter your full name">
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone Number</label>
+                    <input type="text" id="phone" class="form-control" value="" placeholder="Enter your phone number">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" class="form-control" value="" placeholder="Enter your email" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label for="accountId">Account ID</label>
+                    <input type="text" id="accountId" class="form-control" value="" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label for="country">Country</label>
+                    <input type="text" id="country" class="form-control" value="" placeholder="Enter your country">
+                </div>
+                
+                <div class="form-group">
+                    <label for="btcAddress">Bitcoin Address</label>
+                    <input type="text" id="btcAddress" class="form-control" value="" placeholder="Enter your Bitcoin address">
+                </div>
+                
+                <button class="btn" id="saveProfileBtn">Update Profile</button>
+            </div>
+        </div>
+        
+        <!-- Transaction History Section -->
+        <div id="history" class="content-section">
+            <div class="transaction-table">
+                <h2>Transaction History</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Date</th>
+                            <th>Amount</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionBody">
+                        <!-- Transactions will be loaded here -->
+                    </tbody>
+                </table>
+                <div style="text-align: center; padding: 20px; color: var(--text-secondary);" id="noTransactions">
+                    No transactions yet
+                </div>
+            </div>
+        </div>
+        
+        <!-- Invest Section -->
+        <div id="invest" class="content-section">
+            <div class="form-container">
+                <h2>Invest Funds</h2>
+                <p>Choose an investment plan and start earning returns on your capital.</p>
+                
+                <div class="form-group">
+                    <label for="investAmount">Investment Amount</label>
+                    <input type="number" id="investAmount" class="form-control" placeholder="Enter amount in USD" min="100" value="1000">
+                </div>
+                
+                <div class="form-group">
+                    <label for="investCoin">Choose Coin</label>
+                    <select id="investCoin" class="form-control">
+                        <option>Bitcoin (BTC)</option>
+                        <option>Ethereum (ETH)</option>
+                        <option>USD Coin (USDC)</option>
+                        <option>Tether (USDT)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="investPlan">Investment Plan</label>
+                    <select id="investPlan" class="form-control">
+                        <option>Basic Plan - 5% monthly</option>
+                        <option>Advanced Plan - 8% monthly</option>
+                        <option>Premium Plan - 12% monthly</option>
+                        <option>VIP Plan - 18% monthly</option>
+                    </select>
+                </div>
+                
+                <button class="btn" id="investBtn">Invest Now</button>
+            </div>
+        </div>
+        
+        <!-- Fund Transfer Section -->
+        <div id="transfer" class="content-section">
+            <div class="form-container">
+                <h2>Fund Transfer</h2>
+                <p>Transfer funds between your accounts or to other users.</p>
+                
+                <div class="form-group">
+                    <label for="transferFrom">Transfer From</label>
+                    <select id="transferFrom" class="form-control">
+                        <option>Available Balance ($0.00)</option>
+                        <option>Investment Account ($0.00)</option>
+                        <option>Bonus Account ($0.00)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="transferTo">Transfer To</label>
+                    <select id="transferTo" class="form-control">
+                        <option>Another User</option>
+                        <option>Investment Account</option>
+                        <option>External Wallet</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="recipientId">Recipient ID / Wallet Address</label>
+                    <input type="text" id="recipientId" class="form-control" placeholder="Enter recipient ID or wallet address">
+                </div>
+                
+                <div class="form-group">
+                    <label for="transferAmount">Amount</label>
+                    <input type="number" id="transferAmount" class="form-control" placeholder="Enter amount" min="10" value="100">
+                </div>
+                
+                <button class="btn" id="transferBtn">Transfer Funds</button>
+            </div>
+        </div>
+        
+        <!-- Withdrawal Section -->
+        <div id="withdrawal" class="content-section">
+            <div class="form-container">
+                <h2>Request Withdrawal</h2>
+                <p>Withdraw funds from your available balance to your external wallet.</p>
+                
+                <div class="form-group">
+                    <label>Available Balance</label>
+                    <div class="stat-amount" id="withdrawalBalance">$0.00</div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Current</span>
+                            <span>Goal: $50,000</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill balance" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="withdrawAmount">Withdrawal Amount</label>
+                    <input type="number" id="withdrawAmount" class="form-control" placeholder="Enter amount in USD" min="50" value="1000">
+                </div>
+                
+                <div class="form-group">
+                    <label for="withdrawCoin">Withdrawal Method</label>
+                    <select id="withdrawCoin" class="form-control">
+                        <option>Bitcoin (BTC)</option>
+                        <option>Ethereum (ETH)</option>
+                        <option>Bank Transfer</option>
+                        <option>PayPal</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="withdrawWallet">Wallet Address</label>
+                    <input type="text" id="withdrawWallet" class="form-control" value="" placeholder="Enter your wallet address">
+                </div>
+                
+                <button class="btn" id="withdrawBtn">Request Withdrawal</button>
+            </div>
+        </div>
+        
+        <!-- Logout Section -->
+        <div id="logout" class="content-section">
+            <div class="form-container">
+                <h2>Logout</h2>
+                <p>Are you sure you want to logout from your account?</p>
+                <div style="display: flex; gap: 15px; margin-top: 30px;">
+                    <button class="btn" id="cancelLogoutBtn" style="background-color: var(--text-muted);">Cancel</button>
+                    <button class="btn" id="confirmLogoutBtn" style="background-color: var(--danger);">Logout Now</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            COPYRIGHT © 2025 • POWERED BY SPACESHIPFX
+        </div>
+    </div>
+    
+    <!-- Mobile Bottom Navigation -->
+    <div class="mobile-bottom-nav" id="mobileBottomNav">
+        <div class="nav-grid">
+            <button class="nav-item active" data-section="dashboard">
+                <i class="fas fa-home"></i>
+                <span>Home</span>
+            </button>
+            <button class="nav-item" data-section="invest">
+                <i class="fas fa-chart-line"></i>
+                <span>Invest</span>
+            </button>
+            <button class="nav-item" data-section="withdrawal">
+                <i class="fas fa-wallet"></i>
+                <span>Withdraw</span>
+            </button>
+            <button class="nav-item" data-section="history">
+                <i class="fas fa-history"></i>
+                <span>History</span>
+            </button>
+            <button class="nav-item" data-section="profile">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        // Navigation functionality
+        document.addEventListener('DOMContentLoaded', async function() {
+            // DOM Elements
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
+            const menuItems = document.querySelectorAll('.menu-item');
+            const navItems = document.querySelectorAll('.nav-item');
+            const contentSections = document.querySelectorAll('.content-section');
+            const marketItems = document.querySelectorAll('.market-item');
+            const tvActionBtns = document.querySelectorAll('.tv-action-btn');
+            const currentPairElement = document.getElementById('currentPair');
+            
+            // User elements
+            const userGreeting = document.getElementById('userGreeting');
+            const userInitials = document.getElementById('userInitials');
+            const fullNameInput = document.getElementById('fullName');
+            const emailInput = document.getElementById('email');
+            const phoneInput = document.getElementById('phone');
+            const countryInput = document.getElementById('country');
+            const accountIdInput = document.getElementById('accountId');
+            const btcAddressInput = document.getElementById('btcAddress');
+            const withdrawWalletInput = document.getElementById('withdrawWallet');
+            
+            // Balance elements
+            const totalWithdrawalEl = document.getElementById('totalWithdrawal');
+            const availableBalanceEl = document.getElementById('availableBalance');
+            const activeInvestmentEl = document.getElementById('activeInvestment');
+            const totalBonusesEl = document.getElementById('totalBonuses');
+            const withdrawalBalanceEl = document.getElementById('withdrawalBalance');
+            const reinvestAmountEl = document.getElementById('reinvestAmount');
+            
+            // Progress bars
+            const withdrawalProgress = document.getElementById('withdrawalProgress');
+            const balanceProgress = document.getElementById('balanceProgress');
+            const investmentProgress = document.getElementById('investmentProgress');
+            const bonusProgress = document.getElementById('bonusProgress');
+            
+            // Transaction elements
+            const transactionBody = document.getElementById('transactionBody');
+            const noTransactions = document.getElementById('noTransactions');
+            
+            // Check if mobile view
+            function isMobileView() {
+                return window.innerWidth <= 768;
+            }
+            
+            // Initialize TradingView Chart
+            function initTradingViewChart(pair = 'BTCUSD', interval = '1') {
+                if (typeof TradingView === 'undefined') {
+                    console.error('TradingView library not loaded');
+                    return;
+                }
+                
+                try {
+                    new TradingView.widget({
+                        "container_id": "tv-chart",
+                        "width": "100%",
+                        "height": "100%",
+                        "symbol": pair,
+                        "interval": interval,
+                        "timezone": "Etc/UTC",
+                        "theme": "dark",
+                        "style": "1",
+                        "locale": "en",
+                        "toolbar_bg": "#1e293b",
+                        "enable_publishing": false,
+                        "allow_symbol_change": true,
+                        "hide_side_toolbar": false,
+                        "show_popup_button": true,
+                        "popup_width": "1000",
+                        "popup_height": "650",
+                        "studies": [
+                            "Volume@tv-basicstudies",
+                            "MASimple@tv-basicstudies"
+                        ],
+                        "disabled_features": [
+                            "header_widget",
+                            "use_localstorage_for_settings"
+                        ],
+                        "enabled_features": [
+                            "study_templates",
+                            "hide_left_toolbar_by_default"
+                        ],
+                        "overrides": {
+                            "mainSeriesProperties.style": 1,
+                            "paneProperties.background": "#0f172a",
+                            "paneProperties.vertGridProperties.color": "#1e293b",
+                            "paneProperties.horzGridProperties.color": "#1e293b",
+                            "scalesProperties.textColor": "#94a3b8",
+                            "scalesProperties.lineColor": "#334155"
+                        },
+                        "studies_overrides": {
+                            "volume.volume.color.0": "#ef4444",
+                            "volume.volume.color.1": "#10b981",
+                            "volume.volume.transparency": 70,
+                            "volume.volume ma.color": "#3b82f6",
+                            "volume.volume ma.transparency": 30
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error initializing TradingView chart:', error);
+                    // Fallback to static chart if TradingView fails
+                    document.getElementById('tv-chart').innerHTML = `
+                        <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-secondary);">
+                            <div style="text-align: center;">
+                                <i class="fas fa-chart-line" style="font-size: 48px; margin-bottom: 16px; color: var(--primary);"></i>
+                                <p>Live chart loading...</p>
+                                <p style="font-size: 12px;">Chart powered by TradingView</p>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            
+            // Update chart when market item is clicked
+            marketItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const pair = this.getAttribute('data-pair');
+                    const pairName = this.querySelector('.pair-name').textContent;
+                    
+                    // Update current pair display
+                    currentPairElement.textContent = pairName;
+                    
+                    // Update chart
+                    initTradingViewChart(pair, getActiveInterval());
+                    
+                    // Highlight selected market item
+                    marketItems.forEach(mi => mi.style.background = '');
+                    this.style.background = 'rgba(59, 130, 246, 0.1)';
+                });
+            });
+            
+            // Get active interval from buttons
+            function getActiveInterval() {
+                const activeBtn = document.querySelector('.tv-action-btn.active');
+                return activeBtn ? activeBtn.getAttribute('data-interval') : '1';
+            }
+            
+            // Interval button functionality
+            tvActionBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    tvActionBtns.forEach(b => b.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Update chart with new interval
+                    const currentPair = currentPairElement.textContent.replace('/', '');
+                    initTradingViewChart(currentPair, this.getAttribute('data-interval'));
+                });
+            });
+            
+            // Check if user is logged in
+            function checkAuth() {
+                return new Promise((resolve, reject) => {
+                    if (!auth) {
+                        console.error('Firebase auth not initialized');
+                        window.location.href = 'login.html';
+                        reject('Firebase not initialized');
+                        return;
+                    }
+                    
+                    auth.onAuthStateChanged((user) => {
+                        if (user) {
+                            console.log('User is signed in:', user.email);
+                            resolve(user);
+                        } else {
+                            console.log('No user signed in, redirecting to login');
+                            window.location.href = 'login.html';
+                        }
+                    }, (error) => {
+                        console.error('Auth state change error:', error);
+                        window.location.href = 'login.html';
+                        reject(error);
+                    });
+                });
+            }
+            
+            // Fetch user data from Firestore
+            async function fetchUserData(user) {
+                try {
+                    if (!db) {
+                        console.error('Firestore not initialized');
+                        return null;
+                    }
+                    
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    
+                    if (userDoc.exists) {
+                        console.log('User data found:', userDoc.data());
+                        return userDoc.data();
+                    } else {
+                        console.log('No user data found in Firestore');
+                        return null;
+                    }
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
+                    return null;
+                }
+            }
+            
+            // Initialize user data from Firebase
+            async function initUserData() {
+                try {
+                    const user = await checkAuth();
+                    const userData = await fetchUserData(user);
+                    
+                    if (userData) {
+                        // Set user greeting
+                        const fullName = userData.fullName || userData.firstName + ' ' + userData.lastName || 'User';
+                        userGreeting.textContent = `Hello! ${fullName.toUpperCase()}`;
+                        
+                        // Set initials for mobile header
+                        const names = fullName.split(' ');
+                        const initials = names.length >= 2 
+                            ? (names[0].charAt(0) + names[1].charAt(0)).toUpperCase()
+                            : names[0].substring(0, 2).toUpperCase();
+                        userInitials.textContent = initials;
+                        
+                        // Set profile form values
+                        fullNameInput.value = fullName || '';
+                        emailInput.value = userData.email || user.email || '';
+                        phoneInput.value = userData.phone || '';
+                        countryInput.value = userData.country || '';
+                        accountIdInput.value = userData.accountId || 'SPFX' + Date.now().toString().slice(-6);
+                        btcAddressInput.value = userData.bitcoinAddress || userData.btcAddress || '';
+                        
+                        // Update withdrawal wallet with BTC address if available
+                        if (userData.bitcoinAddress || userData.btcAddress) {
+                            withdrawWalletInput.value = userData.bitcoinAddress || userData.btcAddress;
+                        }
+                        
+                        // Initialize balances from user data
+                        await initBalances(user); // Pass the user object
+                    } else {
+                        // No user data found, use defaults
+                        userGreeting.textContent = 'Welcome!';
+                        userInitials.textContent = 'U';
+                        await initBalances(user); // Pass the user object
+                    }
+                } catch (error) {
+                    console.error('Error initializing user data:', error);
+                    userGreeting.textContent = 'Welcome!';
+                    userInitials.textContent = 'U';
+                    // Try to initialize with user object if available
+                    try {
+                        const user = await checkAuth();
+                        await initBalances(user);
+                    } catch (err) {
+                        console.error('Cannot initialize balances:', err);
+                    }
+                }
+            }
+            
+            // Initialize all balances - fetch from Firestore
+            async function initBalances(user) {
+                try {
+                    if (!db || !user) {
+                        console.error('Firestore not initialized or user not found');
+                        return;
+                    }
+                    
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        
+                        // Set balances from Firestore data (or defaults if not available)
+                        const balance = userData.balance || 0;
+                        const investment = userData.investment || 0;
+                        const bonuses = userData.bonuses || 0;
+                        const totalWithdrawn = userData.totalWithdrawn || 0;
+                        
+                        // Update display with real data from Firestore
+                        totalWithdrawalEl.textContent = `$${totalWithdrawn.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                        availableBalanceEl.textContent = `$${balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                        activeInvestmentEl.textContent = `$${investment.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                        totalBonusesEl.textContent = `$${bonuses.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                        withdrawalBalanceEl.textContent = `$${balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                        reinvestAmountEl.textContent = `$${investment.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                        
+                        // Update transfer dropdowns with real data
+                        const transferFromSelect = document.getElementById('transferFrom');
+                        transferFromSelect.innerHTML = `
+                            <option>Available Balance ($${balance.toFixed(2)})</option>
+                            <option>Investment Account ($${investment.toFixed(2)})</option>
+                            <option>Bonus Account ($${bonuses.toFixed(2)})</option>
+                        `;
+                        
+                        // Update progress bars with real data
+                        updateProgressBars(balance, investment, bonuses, totalWithdrawn);
+                        
+                        // Update form values with real data
+                        updateFormValues(userData);
+                        
+                    } else {
+                        // No user data found, create initial document
+                        const initialData = {
+                            balance: 0,
+                            investment: 0,
+                            bonuses: 0,
+                            totalWithdrawn: 0,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                        };
+                        
+                        await db.collection('users').doc(user.uid).set(initialData);
+                        
+                        // Set all balance displays to $0.00
+                        const zeroBalance = '$0.00';
+                        totalWithdrawalEl.textContent = zeroBalance;
+                        availableBalanceEl.textContent = zeroBalance;
+                        activeInvestmentEl.textContent = zeroBalance;
+                        totalBonusesEl.textContent = zeroBalance;
+                        withdrawalBalanceEl.textContent = zeroBalance;
+                        reinvestAmountEl.textContent = zeroBalance;
+                        
+                        // Update transfer dropdowns
+                        const transferFromSelect = document.getElementById('transferFrom');
+                        transferFromSelect.innerHTML = `
+                            <option>Available Balance (${zeroBalance})</option>
+                            <option>Investment Account (${zeroBalance})</option>
+                            <option>Bonus Account (${zeroBalance})</option>
+                        `;
+                        
+                        // Initialize progress bars to 0%
+                        withdrawalProgress.style.width = '0%';
+                        balanceProgress.style.width = '0%';
+                        investmentProgress.style.width = '0%';
+                        bonusProgress.style.width = '0%';
+                        
+                        // Update progress text
+                        document.querySelectorAll('.stat-goal').forEach(el => {
+                            el.textContent = 'Progress: 0% of target';
+                        });
+                    }
+                    
+                    // Set up real-time listener for user data changes
+                    setupRealtimeUpdates(user.uid);
+                    
+                } catch (error) {
+                    console.error('Error initializing balances:', error);
+                    // Fallback to zero values
+                    const zeroBalance = '$0.00';
+                    totalWithdrawalEl.textContent = zeroBalance;
+                    availableBalanceEl.textContent = zeroBalance;
+                    activeInvestmentEl.textContent = zeroBalance;
+                    totalBonusesEl.textContent = zeroBalance;
+                    withdrawalBalanceEl.textContent = zeroBalance;
+                    reinvestAmountEl.textContent = zeroBalance;
+                }
+            }
+
+            // Set up real-time Firestore listener for user data
+            function setupRealtimeUpdates(userId) {
+                if (!db) {
+                    console.error('Firestore not initialized');
+                    return;
+                }
+                
+                // Listen for real-time updates from Firestore
+                db.collection('users').doc(userId).onSnapshot((doc) => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        console.log('Real-time update received:', userData);
+                        
+                        // Update dashboard with new data
+                        updateDashboard(userData);
+                    }
+                }, (error) => {
+                    console.error('Error in real-time listener:', error);
+                });
+            }
+
+            // Update dashboard with Firestore data
+            function updateDashboard(userData) {
+                // Get current values
+                const balance = userData.balance || 0;
+                const investment = userData.investment || 0;
+                const bonuses = userData.bonuses || 0;
+                const totalWithdrawn = userData.totalWithdrawn || 0;
+                
+                // Update display elements
+                totalWithdrawalEl.textContent = `$${totalWithdrawn.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                availableBalanceEl.textContent = `$${balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                activeInvestmentEl.textContent = `$${investment.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                totalBonusesEl.textContent = `$${bonuses.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                withdrawalBalanceEl.textContent = `$${balance.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                reinvestAmountEl.textContent = `$${investment.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
+                
+                // Update transfer dropdowns
+                const transferFromSelect = document.getElementById('transferFrom');
+                transferFromSelect.innerHTML = `
+                    <option>Available Balance ($${balance.toFixed(2)})</option>
+                    <option>Investment Account ($${investment.toFixed(2)})</option>
+                    <option>Bonus Account ($${bonuses.toFixed(2)})</option>
+                `;
+                
+                // Update progress bars
+                updateProgressBars(balance, investment, bonuses, totalWithdrawn);
+                
+                // Update form values
+                updateFormValues(userData);
+            }
+
+            // Update progress bars with real data
+            function updateProgressBars(balance, investment, bonuses, totalWithdrawn) {
+                // Define target goals
+                const balanceGoal = 50000;
+                const investmentGoal = 10000;
+                const bonusGoal = 1000;
+                const withdrawalGoal = 3000;
+                
+                // Calculate percentages
+                const balancePercentage = Math.min((balance / balanceGoal) * 100, 100);
+                const investmentPercentage = Math.min((investment / investmentGoal) * 100, 100);
+                const bonusPercentage = Math.min((bonuses / bonusGoal) * 100, 100);
+                const withdrawalPercentage = Math.min((totalWithdrawn / withdrawalGoal) * 100, 100);
+                
+                // Update progress bar widths with animation
+                setTimeout(() => {
+                    withdrawalProgress.style.width = `${withdrawalPercentage}%`;
+                    balanceProgress.style.width = `${balancePercentage}%`;
+                    investmentProgress.style.width = `${investmentPercentage}%`;
+                    bonusProgress.style.width = `${bonusPercentage}%`;
+                }, 100);
+                
+                // Update progress text
+                const statCards = document.querySelectorAll('.stat-card');
+                if (statCards.length >= 4) {
+                    // Withdrawal progress
+                    statCards[0].querySelector('.stat-goal').textContent = 
+                        `Progress: ${withdrawalPercentage.toFixed(1)}% of target`;
+                    
+                    // Balance progress
+                    statCards[1].querySelector('.stat-goal').textContent = 
+                        `Progress: ${balancePercentage.toFixed(1)}% of target`;
+                    
+                    // Investment progress
+                    statCards[2].querySelector('.stat-goal').textContent = 
+                        `Progress: ${investmentPercentage.toFixed(1)}% of target`;
+                    
+                    // Bonus progress
+                    statCards[3].querySelector('.stat-goal').textContent = 
+                        `Progress: ${bonusPercentage.toFixed(1)}% of target`;
+                }
+            }
+
+            // Update form values with user data
+            function updateFormValues(userData) {
+                // Update withdrawal wallet with BTC address if available
+                if (userData.bitcoinAddress || userData.btcAddress) {
+                    withdrawWalletInput.value = userData.bitcoinAddress || userData.btcAddress;
+                }
+                
+                // Update BTC address in profile form
+                if (userData.bitcoinAddress || userData.btcAddress) {
+                    btcAddressInput.value = userData.bitcoinAddress || userData.btcAddress;
+                }
+                
+                // Update phone number in profile form
+                if (userData.phone) {
+                    phoneInput.value = userData.phone;
+                }
+                
+                // Update country in profile form
+                if (userData.country) {
+                    countryInput.value = userData.country;
+                }
+            }
+            
+            // Initialize transaction history
+            function initTransactionHistory() {
+                transactionBody.innerHTML = '';
+                noTransactions.style.display = 'block';
+            }
+            
+            // Update withdrawal progress
+            function updateWithdrawalProgress() {
+                const totalWithdrawn = parseFloat(totalWithdrawalEl.textContent.replace('$', '').replace(',', '')) || 0;
+                const goal = 3000;
+                const percentage = Math.min((totalWithdrawn / goal) * 100, 100);
+                
+                // Update progress bar
+                withdrawalProgress.style.width = `${percentage}%`;
+                
+                // Update text
+                const statGoal = document.querySelector('.stat-card:first-child .stat-goal');
+                if (statGoal) {
+                    statGoal.textContent = `Progress: ${percentage.toFixed(1)}% of target`;
+                }
+            }
+            
+            // Toggle sidebar on mobile
+            function toggleSidebar() {
+                if (isMobileView()) {
+                    sidebar.classList.toggle('mobile-open');
+                    sidebarOverlay.classList.toggle('active');
+                    
+                    // Toggle hamburger animation
+                    const spans = mobileMenuToggle.querySelectorAll('span');
+                    if (sidebar.classList.contains('mobile-open')) {
+                        spans[0].style.transform = 'rotate(45deg) translate(4px, 4px)';
+                        spans[1].style.opacity = '0';
+                        spans[2].style.transform = 'rotate(-45deg) translate(6px, -5px)';
+                    } else {
+                        spans[0].style.transform = 'none';
+                        spans[1].style.opacity = '1';
+                        spans[2].style.transform = 'none';
+                    }
+                }
+            }
+            
+            // Close sidebar when clicking on overlay
+            sidebarOverlay.addEventListener('click', toggleSidebar);
+            
+            // Toggle sidebar when clicking menu button
+            mobileMenuToggle.addEventListener('click', toggleSidebar);
+            
+            // Function to switch content sections
+            function switchSection(targetSection) {
+                // Remove active class from all content sections
+                contentSections.forEach(section => {
+                    section.classList.remove('active');
+                });
+                
+                // Add active class to target section
+                if (targetSection) {
+                    document.getElementById(targetSection).classList.add('active');
+                    
+                    // Update bottom nav items
+                    navItems.forEach(btn => {
+                        btn.classList.remove('active');
+                        if (btn.getAttribute('data-section') === targetSection) {
+                            btn.classList.add('active');
+                        }
+                    });
+                    
+                    // Update sidebar menu items
+                    menuItems.forEach(item => {
+                        item.classList.remove('active');
+                        if (item.getAttribute('data-section') === targetSection) {
+                            item.classList.add('active');
+                        }
+                    });
+                    
+                    // Initialize chart when dashboard is active
+                    if (targetSection === 'dashboard') {
+                        setTimeout(() => {
+                            initTradingViewChart('BTCUSD', getActiveInterval());
+                        }, 100);
+                    }
+                }
+                
+                // Close sidebar on mobile after clicking a menu item
+                if (isMobileView()) {
+                    toggleSidebar();
+                }
+                
+                // Scroll to top on mobile
+                if (isMobileView()) {
+                    window.scrollTo(0, 0);
+                }
+            }
+            
+            // Add click event to each menu item
+            menuItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const targetSection = this.getAttribute('data-section');
+                    switchSection(targetSection);
+                });
+            });
+            
+            // Add click event to bottom navigation items
+            navItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const targetSection = this.getAttribute('data-section');
+                    switchSection(targetSection);
+                });
+            });
+            
+            // Form button functionality
+            document.getElementById('reinvestBtn').addEventListener('click', function() {
+                const coin = document.getElementById('coin').value;
+                const plan = document.getElementById('plan').value;
+                
+                if (coin === 'Select Coin' || plan === 'Select Plan') {
+                    alert('Please select both a coin and a plan.');
+                    return;
+                }
+                
+                alert(`Reinvestment request submitted!\n\nCoin: ${coin}\nPlan: ${plan}\n\nYour funds will be reinvested automatically.`);
+            });
+            
+            // Save profile button functionality
+            document.getElementById('saveProfileBtn').addEventListener('click', async function() {
+                try {
+                    const user = auth.currentUser;
+                    if (!user) {
+                        alert('You must be logged in to update profile.');
+                        return;
+                    }
+                    
+                    const fullName = fullNameInput.value.trim();
+                    const phone = phoneInput.value.trim();
+                    const country = countryInput.value.trim();
+                    const btcAddress = btcAddressInput.value.trim();
+                    
+                    if (!fullName) {
+                        alert('Please enter your full name.');
+                        return;
+                    }
+                    
+                    // Parse first and last name
+                    const names = fullName.split(' ');
+                    const firstName = names[0] || '';
+                    const lastName = names.slice(1).join(' ') || '';
+                    
+                    // Update user data in Firestore
+                    await db.collection('users').doc(user.uid).update({
+                        firstName: firstName,
+                        lastName: lastName,
+                        fullName: fullName,
+                        phone: phone,
+                        country: country,
+                        bitcoinAddress: btcAddress,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    // Update greeting
+                    userGreeting.textContent = `Hello! ${fullName.toUpperCase()}`;
+                    
+                    // Update mobile header initials
+                    const initials = names.length >= 2 
+                        ? (names[0].charAt(0) + names[1].charAt(0)).toUpperCase()
+                        : names[0].substring(0, 2).toUpperCase();
+                    userInitials.textContent = initials;
+                    
+                    // Update withdrawal wallet if BTC address was added
+                    if (btcAddress) {
+                        withdrawWalletInput.value = btcAddress;
+                    }
+                    
+                    alert('Profile information saved successfully!');
+                } catch (error) {
+                    console.error('Error saving profile:', error);
+                    alert('Error saving profile. Please try again.');
+                }
+            });
+            
+            // Invest button functionality
+            document.getElementById('investBtn').addEventListener('click', async function() {
+                const amount = document.getElementById('investAmount').value;
+                const coin = document.getElementById('investCoin').value;
+                const plan = document.getElementById('investPlan').value;
+                
+                if (!amount || amount < 100) {
+                    alert('Please enter an amount of at least $100.');
+                    return;
+                }
+                
+                try {
+                    const user = auth.currentUser;
+                    if (!user) {
+                        alert('You must be logged in to invest.');
+                        return;
+                    }
+                    
+                    // Record investment in Firestore
+                    await db.collection('transactions').add({
+                        userId: user.uid,
+                        type: 'investment',
+                        amount: parseFloat(amount),
+                        currency: 'USD',
+                        description: `Investment in ${plan} using ${coin}`,
+                        status: 'pending',
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    alert(`Investment submitted!\n\nAmount: $${amount}\nCoin: ${coin}\nPlan: ${plan}\n\nYour investment will be activated shortly.`);
+                } catch (error) {
+                    console.error('Error recording investment:', error);
+                    alert('Error submitting investment. Please try again.');
+                }
+            });
+            
+            // Transfer button functionality
+            document.getElementById('transferBtn').addEventListener('click', function() {
+                const amount = document.getElementById('transferAmount').value;
+                const recipient = document.getElementById('recipientId').value;
+                
+                if (!amount || amount < 10) {
+                    alert('Please enter an amount of at least $10.');
+                    return;
+                }
+                
+                if (!recipient) {
+                    alert('Please enter a recipient ID or wallet address.');
+                    return;
+                }
+                
+                alert(`Transfer request submitted!\n\nAmount: $${amount}\nRecipient: ${recipient}\n\nYour transfer will be processed within 24 hours.`);
+            });
+            
+            // Withdrawal button functionality
+            document.getElementById('withdrawBtn').addEventListener('click', async function() {
+                const amount = document.getElementById('withdrawAmount').value;
+                const method = document.getElementById('withdrawCoin').value;
+                const wallet = document.getElementById('withdrawWallet').value;
+                
+                if (!amount || amount < 50) {
+                    alert('Minimum withdrawal amount is $50.');
+                    return;
+                }
+                
+                if (!wallet) {
+                    alert('Please enter your wallet address.');
+                    return;
+                }
+                
+                try {
+                    const user = auth.currentUser;
+                    if (!user) {
+                        alert('You must be logged in to withdraw.');
+                        return;
+                    }
+                    
+                    // Record withdrawal in Firestore
+                    await db.collection('transactions').add({
+                        userId: user.uid,
+                        type: 'withdrawal',
+                        amount: parseFloat(amount),
+                        currency: 'USD',
+                        description: `Withdrawal to ${method} wallet`,
+                        status: 'pending',
+                        walletAddress: wallet,
+                        timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    // Update withdrawal progress based on current total
+                    updateWithdrawalProgress();
+                    
+                    alert(`Withdrawal request submitted!\n\nAmount: $${amount}\nMethod: ${method}\n\nYour withdrawal will be processed within 1-3 business days.`);
+                } catch (error) {
+                    console.error('Error recording withdrawal:', error);
+                    alert('Error submitting withdrawal. Please try again.');
+                }
+            });
+            
+            // Logout button functionality
+            document.getElementById('confirmLogoutBtn').addEventListener('click', async function() {
+                if (confirm('Are you sure you want to logout?')) {
+                    try {
+                        await auth.signOut();
+                        alert('You have been logged out. Redirecting to login page...');
+                        window.location.href = 'login.html';
+                    } catch (error) {
+                        console.error('Logout error:', error);
+                        alert('Error logging out. Please try again.');
+                    }
+                }
+            });
+            
+            // Cancel logout button
+            document.getElementById('cancelLogoutBtn').addEventListener('click', function() {
+                switchSection('dashboard');
+            });
+            
+            // Search functionality
+            const searchInput = document.querySelectorAll('.search-bar input')[0];
+            if (searchInput) {
+                searchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        alert(`Searching for: ${this.value}`);
+                    }
+                });
+            }
+            
+            // Mobile search functionality
+            const mobileSearchInput = document.querySelectorAll('.search-bar input')[1];
+            if (mobileSearchInput) {
+                mobileSearchInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        alert(`Searching for: ${this.value}`);
+                    }
+                });
+            }
+            
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(event) {
+                if (isMobileView() && 
+                    sidebar.classList.contains('mobile-open') && 
+                    !sidebar.contains(event.target) && 
+                    !mobileMenuToggle.contains(event.target)) {
+                    toggleSidebar();
+                }
+            });
+            
+            // Swipe to open sidebar on mobile
+            let touchStartX = 0;
+            let touchEndX = 0;
+            
+            document.addEventListener('touchstart', function(e) {
+                if (isMobileView() && e.touches[0].clientX < 50) {
+                    touchStartX = e.touches[0].clientX;
+                }
+            });
+            
+            document.addEventListener('touchend', function(e) {
+                if (isMobileView() && touchStartX < 50) {
+                    touchEndX = e.changedTouches[0].clientX;
+                    if (touchEndX - touchStartX > 100) {
+                        // Swipe right - open sidebar
+                        if (!sidebar.classList.contains('mobile-open')) {
+                            toggleSidebar();
+                        }
+                    }
+                }
+            });
+            
+            // Initialize everything
+            await initUserData();
+            initTransactionHistory();
+            
+            // Initialize TradingView chart
+            setTimeout(() => {
+                initTradingViewChart('BTCUSD', '1');
+            }, 500);
+            
+            // Handle window resize
+            window.addEventListener('resize', function() {
+                // If resizing to desktop view, make sure sidebar is visible
+                if (!isMobileView()) {
+                    sidebar.classList.remove('mobile-open');
+                    sidebarOverlay.classList.remove('active');
+                    
+                    // Reset hamburger icon
+                    const spans = mobileMenuToggle.querySelectorAll('span');
+                    spans[0].style.transform = 'none';
+                    spans[1].style.opacity = '1';
+                    spans[2].style.transform = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
