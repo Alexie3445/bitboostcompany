@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bitboost Investment Company - Professional Trading Platform</title>
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Base Styles */
+        :root {
+            --primary: #0a1f44;
+            --secondary: #e80566;
+            --accent: #1a2c79;
+            --light: #f8f9fa;
+            --dark: #121212;
+            --gray: #6c757d;
+            --gradient: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+            --gradient-reverse: linear-gradient(135deg, var(--accent) 0%, var(--primary) 100%);
+            --shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Open Sans', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        h1 {
+            font-size: 3rem;
+            line-height: 1.2;
+        }
+        
+        h2 {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+        
+        h3 {
+            font-size: 1.75rem;
+        }
+        
+        h4 {
+            font-size: 1.5rem;
+        }
+        
+        p {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+            color: #555;
+        }
+        
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: var(--transition);
+        }
+        
+        ul {
+            list-style: none;
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 15px;
+        }
+        
+        .section-padding {
+            padding: 80px 0;
+        }
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background: var(--gradient);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .btn:hover {
+            background: var(--gradient-reverse);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow);
+        }
+        
+        .btn-secondary {
+            background: var(--secondary);
+        }
+        
+        .btn-secondary:hover {
+            background: #d0045b;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .section-title h2 {
+            position: relative;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .section-title h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--secondary);
+        }
+        
+        .section-title p {
+            max-width: 700px;
+            margin: 0 auto;
+            color: var(--gray);
+        }
+        
+        /* Preloader */
+        #preloader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--gradient);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+        
+        .loader1 {
+            text-align: center;
+            color: white;
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        
+        /* Header & Navigation */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: white;
+            box-shadow: var(--shadow);
+            z-index: 1000;
+            transition: var(--transition);
+        }
+        
+        .header-scrolled {
+            padding: 10px 0;
+        }
+        
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .logo span {
+            color: var(--secondary);
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            font-weight: 600;
+            color: var(--primary);
+            position: relative;
+        }
+        
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--secondary);
+            transition: var(--transition);
+        }
+        
+        .nav-links a:hover::after,
+        .nav-links a.active::after {
+            width: 100%;
+        }
+        
+        .nav-toggle {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--primary);
+        }
+        
+        /* Hero Section */
+        .hero {
+            padding: 180px 0 100px;
+            background: linear-gradient(rgba(10, 31, 68, 0.9), rgba(10, 31, 68, 0.9)), url('img/104.jpg') no-repeat center center/cover;
+            color: white;
+            text-align: center;
+        }
+        
+        .hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .hero h1 {
+            margin-bottom: 20px;
+            color: white;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .hero-badges {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 40px;
+        }
+        
+        .badge {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 500;
+            transition: var(--transition);
+        }
+        
+        .badge:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+        }
+        
+        /* Features Section */
+        .features {
+            background: white;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .feature-card {
+            background: white;
+            border-radius: 10px;
+            padding: 40px 30px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: var(--transition);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: var(--gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            color: white;
+            font-size: 1.8rem;
+        }
+        
+        /* About Section */
+        .about {
+            background: #f8f9fa;
+        }
+        
+        .about-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 50px;
+            align-items: center;
+        }
+        
+        .about-img {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        .about-img img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        .about-list li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .about-list i {
+            color: var(--secondary);
+            margin-right: 10px;
+            margin-top: 5px;
+        }
+        
+        /* Services Section */
+        .services {
+            background: white;
+        }
+        
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .service-card {
+            background: white;
+            border-radius: 10px;
+            padding: 40px 30px;
+            box-shadow: var(--shadow);
+            display: flex;
+            transition: var(--transition);
+        }
+        
+        .service-card:hover {
+            transform: translateY(-10px);
+        }
+        
+        .service-icon {
+            margin-right: 20px;
+            color: var(--secondary);
+            font-size: 2rem;
+            min-width: 60px;
+        }
+        
+        /* Stats Section */
+        .stats {
+            background: var(--gradient);
+            color: white;
+            text-align: center;
+            padding: 80px 0;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+        }
+        
+        .stat-item h3 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            color: white;
+        }
+        
+        /* Trading Section */
+        .trading {
+            background: #f8f9fa;
+        }
+        
+        .trading-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 50px;
+            align-items: center;
+        }
+        
+        .trading-widget {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+        
+        /* CTA Section */
+        .cta {
+            background: var(--gradient);
+            color: white;
+            text-align: center;
+            padding: 100px 0;
+        }
+        
+        .cta h2 {
+            color: white;
+            margin-bottom: 20px;
+        }
+        
+        .cta p {
+            max-width: 700px;
+            margin: 0 auto 40px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        /* Footer */
+        footer {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .footer-top {
+            padding: 80px 0 40px;
+        }
+        
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+        
+        .footer-column h4 {
+            color: white;
+            margin-bottom: 25px;
+            position: relative;
+            padding-bottom: 15px;
+        }
+        
+        .footer-column h4::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 2px;
+            background: var(--secondary);
+        }
+        
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+        
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            transition: var(--transition);
+        }
+        
+        .footer-links a:hover {
+            color: white;
+            padding-left: 5px;
+        }
+        
+        .contact-info li {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            color: rgba(255, 255, 255, 0.8);
+        }
+        
+        .contact-info i {
+            margin-right: 15px;
+            color: var(--secondary);
+            margin-top: 5px;
+        }
+        
+        .footer-bottom {
+            background: rgba(0, 0, 0, 0.2);
+            padding: 20px 0;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.7);
+        }
+        
+        /* Bitcoin Exchange Section */
+        .bitcoin-exchange {
+            background: var(--gradient);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+        
+        .exchange-title {
+            margin-bottom: 40px;
+        }
+        
+        .exchange-title h2 {
+            color: white;
+        }
+        
+        .exchange-grid {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        /* Certificate Section */
+        .certificate {
+            background: white;
+        }
+        
+        .certificate-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 50px;
+            align-items: center;
+        }
+        
+        .certificate-img {
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        
+        .certificate-img img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        
+        /* Debit Card Section */
+        .debit-card {
+            background: var(--gradient);
+            color: white;
+            padding: 80px 0;
+        }
+        
+        .debit-card-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .debit-card-content h2 {
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .debit-card-img {
+            max-width: 500px;
+            margin: 40px auto;
+        }
+        
+        .debit-card-img img {
+            width: 100%;
+            height: auto;
+        }
+        
+        .debit-card-list {
+            text-align: left;
+            margin: 30px 0;
+            max-width: 600px;
+            margin: 30px auto;
+        }
+        
+        .debit-card-list li {
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .debit-card-list i {
+            color: var(--secondary);
+            margin-right: 15px;
+        }
+        
+        /* Live Payouts Section */
+        .live-payouts {
+            background: #f8f9fa;
+            text-align: center;
+        }
+        
+        .payouts-container {
+            background: white;
+            border-radius: 10px;
+            padding: 40px;
+            box-shadow: var(--shadow);
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+            
+            h2 {
+                font-size: 2rem;
+            }
+            
+            .hero {
+                padding: 150px 0 80px;
+            }
+            
+            .nav-toggle {
+                display: block;
+            }
+            
+            .nav-links {
+                position: fixed;
+                top: 70px;
+                right: -100%;
+                flex-direction: column;
+                background: white;
+                width: 250px;
+                height: calc(100vh - 70px);
+                padding: 40px 30px;
+                box-shadow: var(--shadow);
+                transition: var(--transition);
+                z-index: 999;
+            }
+            
+            .nav-links.active {
+                right: 0;
+            }
+            
+            .nav-links li {
+                margin-bottom: 20px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .section-padding {
+                padding: 60px 0;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            h2 {
+                font-size: 1.75rem;
+            }
+            
+            .hero {
+                padding: 130px 0 60px;
+            }
+            
+            .btn {
+                padding: 10px 25px;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero-badges {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .exchange-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Preloader -->
+    <div id="preloader">
+        <div class="loader1">
+            <span><br><b>Bitboost Investment Company</b></span>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header id="header">
+        <div class="container">
+            <nav class="navbar">
+                <a href="index.html" class="logo">Bitboost <span>Investment</span></a>
+                
+                <div class="nav-toggle" id="navToggle">
+                    <i class="fas fa-bars"></i>
+                </div>
+                
+                <ul class="nav-links" id="navLinks">
+                    <li><a href="#home" class="active">Home</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="payouts.html">Live Payouts</a></li>
+                    <li><a href="login.html" class="btn btn-secondary">Login</a></li>
+                    <li><a href="register.html" class="btn">Register</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <span class="text-uppercase" style="display: block; margin-bottom: 15px; color: var(--secondary); font-weight: 600;">Trading at milliseconds interval</span>
+                <h1>Get into the Enhanced Digital World of Trading</h1>
+                <p>While existing solutions offer to solve just one problem at a time, our team is up to build a secure, useful, & easy-to-use platform.</p>
+                <div class="hero-actions">
+                    <a href="login.html" class="btn btn-secondary">LOGIN</a>
+                    <span style="margin: 0 15px; color: white;">OR</span>
+                    <a href="register.html" class="btn">REGISTER</a>
+                </div>
+                
+                <div class="hero-badges">
+                    <a href="https://abra.com/" class="badge">abra.com</a>
+                    <a href="https://instacoins.com/" class="badge">instacoins.com</a>
+                    <a href="https://payments.changelly.com/" class="badge">changelly.com</a>
+                    <a href="https://paxful.com/" class="badge">paxful.com</a>
+                    <a href="https://moonpay.io/" class="badge">moonpay.io</a>
+                    <a href="https://coinbase.com/" class="badge">coinbase.com</a>
+                    <a href="https://banxa.com/" class="badge">banxa.com</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features section-padding" id="features">
+        <div class="container">
+            <div class="section-title">
+                <h2>Why Choose Bitboost?</h2>
+                <p>We provide the best trading experience with cutting-edge technology and professional support</p>
+            </div>
+            
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h4>Management Team</h4>
+                    <p>We have the world's best and the most experienced and professional management team to rely on.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="far fa-laugh-beam"></i>
+                    </div>
+                    <h4>Easy and Convenient</h4>
+                    <p>You invest your money, and we take care of the rest, providing you with convenient, user-friendly tools for controlling your funds.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-money-bill-alt"></i>
+                    </div>
+                    <h4>100% Profit Guarantee</h4>
+                    <p>With our expertise we guarantee you the best profits in the market. No one can beat us. With us you will enjoy the safest and the best profit rates.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about section-padding" id="about">
+        <div class="container">
+            <div class="about-content">
+                <div class="about-img">
+                    <img src="img/about-us.jpg" alt="About Bitboost Investment Company">
+                </div>
+                
+                <div class="about-text">
+                    <h2>About Us</h2>
+                    <p>With flexible investment plans, our company benefits from an extensive network of global investors. We have over 15 years of experience trading on the Financial market and we make improvements to our trading strategies using the latest sophisticated trading technology, Placing orders at a lightning pace with quick access to historical data and exploiting winning patterns in the currency market with excellent predictive power. We trade at millisecond intervals, and profits do add up to consistent returns which guarantees maximum profitability.</p>
+                    
+                    <p>Trade Binary Options with the best platform, on a wide selection of assets, with high payouts, lightning-fast order execution and get personal customer support around the clock, fast withdrawals and the expertise of industry leaders.</p>
+                    
+                    <ul class="about-list">
+                        <li><i class="fas fa-check"></i> <strong>Intuitive Platform</strong></li>
+                        <li><i class="fas fa-check"></i> <strong>Attractive Bonus System</strong></li>
+                        <li><i class="fas fa-check"></i> <strong>Online Trading Platform</strong></li>
+                        <li><i class="fas fa-check"></i> <strong>Functional customer support</strong></li>
+                        <li><i class="fas fa-check"></i> <strong>CFD Trading</strong></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Debit Card Section -->
+    <section class="debit-card section-padding">
+        <div class="container">
+            <div class="debit-card-content">
+                <h2>ORDER Bitboost Investment Company DEBIT CARD!</h2>
+                
+                <ul class="debit-card-list">
+                    <li><i class="fas fa-check-circle"></i> AVAILABLE IN BOTH CARD TYPES - VISA AND MASTERCARD</li>
+                    <li><i class="fas fa-check-circle"></i> CONVENIENT INSTANT EXCHANGE OF USD FOR BITCOIN</li>
+                </ul>
+                
+                <div class="debit-card-img">
+                    <img src="img/card.jpg " alt="Bitboost Debit Card">
+                </div>
+                
+                <p>One of the main advantages of cooperation with Bitboost Investment Company is the possibility to issue a nominal debit card of the popular European bank. Using this type of card allows you to easily operate cryptocurrency, to instantly exchange or purchase Bitcoin, to pay in shops, to withdraw cash from ATMs and more.</p>
+                
+                <p>Card issuing is available for a particular group of customers who are active investors with a deposit of 10 Bitcoin or more after the compulsory verification of identity and physical address.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services section-padding" id="services">
+        <div class="container">
+            <div class="section-title">
+                <h2>Professional Wide Range of Services</h2>
+                <p>See the benefits you can get by trading with our team of experts.</p>
+            </div>
+            
+            <div class="service-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div class="service-content">
+                        <h4>Technology for your benefit</h4>
+                        <p>We provide investors with a unique array of features running on a solid technological base.</p>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <div class="service-content">
+                        <h4>Security and Stability</h4>
+                        <p>Our unique platform is very much secured with the latest security measures in the industry.</p>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-server"></i>
+                    </div>
+                    <div class="service-content">
+                        <h4>Instant Effect</h4>
+                        <p>All operations within our system, including financial transactions and statistical reporting, occur in real time.</p>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-headphones-alt"></i>
+                    </div>
+                    <div class="service-content">
+                        <h4>Customer Support</h4>
+                        <p>Our round-the-clock E-mail, Telegram and Facebook support team will respond to you at any time, any day. Even on weekends and holidays!</p>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <div class="service-content">
+                        <h4>Low Fees</h4>
+                        <p>Adoption of PPS+ and PPLNS payment methods. Transaction fees will be paid for both methods. A setup fee so low as to guarantee safety and daily profits.</p>
+                    </div>
+                </div>
+                
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-chart-bar"></i>
+                    </div>
+                    <div class="service-content">
+                        <h4>Transparency</h4>
+                        <p>Real-time and detailed data monitoring on trades, stocks and binary with clear graphical demonstration. Additional reference for users with pool data.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats section-padding">
+        <div class="container">
+            <div class="section-title">
+                <h2 style="color: white;">Our Growth in Numbers</h2>
+                <p style="color: rgba(255, 255, 255, 0.8);">Trusted by thousands of investors worldwide</p>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <h3>1247</h3>
+                    <p>Ongoing Trade</p>
+                </div>
+                
+                <div class="stat-item">
+                    <h3>2789</h3>
+                    <p>Online Members</p>
+                </div>
+                
+                <div class="stat-item">
+                    <h3>7684</h3>
+                    <p>Registered Members</p>
+                </div>
+                
+                <div class="stat-item">
+                    <h3>854678</h3>
+                    <p>Total Payout</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Certificate Section -->
+    <section class="certificate section-padding">
+        <div class="container">
+            <div class="certificate-content">
+                <div class="certificate-img">
+                    <img src="img/cert.png" alt="Company Certificate">
+                </div>
+                
+                <div class="certificate-text">
+                    <h2>Certificate of Incorporation</h2>
+                    <p>The Registrar of Companies for England and Wales, hereby certifies that</p>
+                    <h3>Bitboost Investment Company</h3>
+                    <p>is this day incorporated under the Companies Act 2006 as a private company, that the company is limited by shared, and the situation on its registered office is in England and Wales.</p>
+                    
+                    <div class="certificate-details">
+                        <h4>Company Number: FC0003263</h4>
+                        <a href="https://beta.companieshouse.gov.uk/company/FC019163" target="_blank" class="btn" style="margin-top: 20px;">View Registration</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bitcoin Exchange Section -->
+    <section class="bitcoin-exchange section-padding">
+        <div class="container">
+            <div class="exchange-title">
+                <h2>Where to Buy Bitcoins</h2>
+                <p>Trusted cryptocurrency exchanges recommended by Bitboost</p>
+            </div>
+            
+            <div class="exchange-grid">
+                <a href="https://abra.com/" class="btn">abra.com</a>
+                <a href="https://instacoins.com/" class="btn">instacoins.com</a>
+                <a href="https://payments.changelly.com/" class="btn">changelly.com</a>
+                <a href="https://paxful.com/" class="btn">paxful.com</a>
+                <a href="https://moonpay.io/" class="btn">moonpay.io</a>
+                <a href="https://coinbase.com/" class="btn">coinbase.com</a>
+                <a href="https://banxa.com/" class="btn">banxa.com</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trading Widget Section -->
+    <section class="trading section-padding">
+        <div class="container">
+            <div class="section-title">
+                <h2>Live Market Data</h2>
+                <p>Stay updated with real-time cryptocurrency market information</p>
+            </div>
+            
+            <div class="trading-content">
+                <div class="trading-widget">
+                    <!-- TradingView Widget would go here -->
+                    <div style="height: 400px; background: #f5f5f5; border-radius: 5px; display: flex; align-items: center; justify-content: center;">
+                        <p style="color: #666;">TradingView Market Widget</p>
+                    </div>
+                </div>
+                
+                <div class="trading-text">
+                    <h3>Our Goal is to Help You Invest</h3>
+                    <p>The small capital requirements in trading forex are due to the use of leverage when trading forex.</p>
+                    
+                    <ul class="about-list">
+                        <li><i class="fas fa-check"></i> <strong>Expert Trading Advisors</strong></li>
+                        <li><i class="fas fa-check"></i> <strong>Short Term Contracts</strong></li>
+                        <li><i class="fas fa-check"></i> <strong>Trading Indices, Metals, Stocks</strong></li>
+                        <li><i class="fas fa-check"></i> <strong>Technology for your benefits</strong></li>
+                    </ul>
+                    
+                    <a href="register.html" class="btn" style="margin-top: 20px;">Start Trading Now</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Payouts Section -->
+    <section class="live-payouts section-padding">
+        <div class="container">
+            <div class="section-title">
+                <h2>Live Payouts</h2>
+                <p>Real-time updates on successful withdrawals by our investors</p>
+            </div>
+            
+            <div class="payouts-container">
+                <div id="diw">
+                    <!-- Live payouts would be loaded here -->
+                    <p>Live payout data loading...</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta section-padding">
+        <div class="container">
+            <h2>We're a Dynamic Team of Expert Traders</h2>
+            <p>We want you to not just Trade in the world's financial markets, but also with a simple and user friendly online platform.</p>
+            <a href="register.html" class="btn btn-secondary">Sign Up Now</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-top">
+            <div class="container">
+                <div class="footer-grid">
+                    <div class="footer-column">
+                        <h4>QUICK LINKS</h4>
+                        <ul class="footer-links">
+                            <li><a href="index.html">Home</a></li>
+                            <li><a href="#about">About Us</a></li>
+                            <li><a href="#services">Services</a></li>
+                            <li><a href="payouts.html">Live Payouts</a></li>
+                            <li><a href="https://beta.companieshouse.gov.uk/company/FC019163" target="_blank">Company Registration</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-column">
+                        <h4>FEATURES</h4>
+                        <ul class="footer-links">
+                            <li><a>Security & Stability</a></li>
+                            <li><a>Instant Effect</a></li>
+                            <li><a>Customer Support</a></li>
+                            <li><a>Low Fees</a></li>
+                            <li><a>Transparency</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-column">
+                        <h4>SERVICES</h4>
+                        <ul class="footer-links">
+                            <li><a>Cryptocurrency Mining</a></li>
+                            <li><a>Binary Options</a></li>
+                            <li><a>Forex Trades</a></li>
+                            <li><a>Indices, Metals, Stocks</a></li>
+                            <li><a>CFD Trading</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div class="footer-column">
+                        <h4>GET IN TOUCH</h4>
+                        <ul class="contact-info">
+                            <li>
+                                <i class="fas fa-envelope"></i>
+                                <div>
+                                    <strong>Email:</strong><br>
+                                    contact@bitboost-investment.com
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-headset"></i>
+                                <div>
+                                    <strong>Support:</strong><br>
+                                    support@bitboost-investment.com
+                                </div>
+                            </li>
+                            <li>
+                                <i class="fas fa-phone"></i>
+                                <div>
+                                    <strong>Phone:</strong><br>
+                                    +14800056789
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <div class="container">
+                <p>Copyrights © 2025. All rights reserved by Bitboost Investment Company</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Preloader
+        window.addEventListener('load', function() {
+            const preloader = document.getElementById('preloader');
+            setTimeout(function() {
+                preloader.style.display = 'none';
+            }, 1000);
+        });
+
+        // Mobile Navigation Toggle
+        const navToggle = document.getElementById('navToggle');
+        const navLinks = document.getElementById('navLinks');
+        
+        navToggle.addEventListener('click', function() {
+            navLinks.classList.toggle('active');
+            navToggle.querySelector('i').classList.toggle('fa-bars');
+            navToggle.querySelector('i').classList.toggle('fa-times');
+        });
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', function() {
+                navLinks.classList.remove('active');
+                navToggle.querySelector('i').classList.add('fa-bars');
+                navToggle.querySelector('i').classList.remove('fa-times');
+            });
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 50) {
+                header.classList.add('header-scrolled');
+            } else {
+                header.classList.remove('header-scrolled');
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                if(this.getAttribute('href') === '#') return;
+                
+                e.preventDefault();
+                const targetId = this.getAttribute('href');
+                const targetElement = document.querySelector(targetId);
+                
+                if(targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Simulate live payouts update
+        setInterval(function() {
+            const payouts = document.getElementById('diw');
+            if(payouts) {
+                const now = new Date();
+                const timeString = now.toLocaleTimeString();
+                const randomAmount = (Math.random() * 5 + 0.5).toFixed(2);
+                const randomUser = "User" + Math.floor(Math.random() * 10000);
+                
+                payouts.innerHTML = `
+                    <div style="text-align: center;">
+                        <h3 style="color: var(--primary); margin-bottom: 20px;">Latest Payouts</h3>
+                        <div style="background: var(--gradient); color: white; padding: 15px; border-radius: 10px; margin-bottom: 10px;">
+                            <strong>${randomUser}</strong> received <strong>${randomAmount} BTC</strong><br>
+                            <small>${timeString}</small>
+                        </div>
+                        <p style="color: #666; font-size: 0.9rem;">Payouts update every 3 seconds</p>
+                    </div>
+                `;
+            }
+        }, 3000);
+    </script>
+    <script src="http://code.jivosite.com/widget/ihTJEwPCFw" async></script>
+
+    <script src="../www.google.com/recaptcha/api.js"></script>
+        <!--jQuery-->
+        <script src="jst/jquery-3.4.1.min.js"></script>
+        <!--Popper js-->
+        <script src="jst/popper.min.js"></script>
+        <!--Bootstrap js-->
+        <script src="jst/bootstrap.min.js"></script>
+        <!--Magnific popup js-->
+        <script src="jst/jquery.magnific-popup.min.js"></script>
+        <!--jquery easing js-->
+        <script src="jst/jquery.easing.min.js"></script>
+        <!--jquery ytplayer js-->
+        <script src="jst/jquery.mb.YTPlayer.min.js"></script>
+        <!--Isotope filter js-->
+        <script src="jst/mixitup.min.js"></script>
+        <!--wow js-->
+        <script src="jst/wow.min.js"></script>
+        <!--owl carousel js-->
+        <script src="jst/owl.carousel.min.js"></script>
+        <!--countdown js-->
+        <script src="jst/jquery.countdown.min.js"></script>
+        <!--custom js-->
+        <script src="jst/scripts.js"></script>  
+    <script src="widget-v4.tidiochat.com/1_82_0/static/js/render.acd930074e27198d61a1.html" async></script>
+</body>
+</html>
