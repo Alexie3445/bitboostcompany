@@ -1353,7 +1353,7 @@
                         </tr>
                         <tr>
                             <td><strong>EUR/USD</strong></td>
-                            <td>1.1742</td>
+            <td>1.1742</td>
                             <td class="positive">+0.14%</td>
                             <td>$142.8B</td>
                             <td>-</td>
@@ -1684,6 +1684,15 @@
             // Transaction elements
             const transactionBody = document.getElementById('transactionBody');
             const noTransactions = document.getElementById('noTransactions');
+            
+            // Variables for touch handling
+            let touchStartX = 0;
+            let touchStartY = 0;
+            let touchEndX = 0;
+            let touchEndY = 0;
+            let isSwiping = false;
+            const swipeThreshold = 50; // Minimum distance for swipe
+            const swipeAreaWidth = 50; // Area from left edge where swipe is detected
             
             // Check if mobile view
             function isMobileView() {
@@ -2443,27 +2452,70 @@
                 }
             });
             
-            // Swipe to open sidebar on mobile
-            let touchStartX = 0;
-            let touchEndX = 0;
+            // Improved touch handling for mobile swipe gestures
+            function handleTouchStart(e) {
+                if (!isMobileView()) return;
+                
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+                isSwiping = false;
+            }
             
-            document.addEventListener('touchstart', function(e) {
-                if (isMobileView() && e.touches[0].clientX < 50) {
-                    touchStartX = e.touches[0].clientX;
+            function handleTouchMove(e) {
+                if (!isMobileView()) return;
+                
+                if (!touchStartX || !touchStartY) return;
+                
+                touchEndX = e.touches[0].clientX;
+                touchEndY = e.touches[0].clientY;
+                
+                const diffX = touchEndX - touchStartX;
+                const diffY = touchEndY - touchStartY;
+                
+                // Check if this is a horizontal swipe (not vertical scroll)
+                if (Math.abs(diffX) > Math.abs(diffY)) {
+                    // Prevent scrolling when swiping horizontally
+                    e.preventDefault();
+                    isSwiping = true;
                 }
-            });
+            }
             
-            document.addEventListener('touchend', function(e) {
-                if (isMobileView() && touchStartX < 50) {
-                    touchEndX = e.changedTouches[0].clientX;
-                    if (touchEndX - touchStartX > 100) {
-                        // Swipe right - open sidebar
-                        if (!sidebar.classList.contains('mobile-open')) {
+            function handleTouchEnd(e) {
+                if (!isMobileView() || !isSwiping) return;
+                
+                const diffX = touchEndX - touchStartX;
+                const diffY = touchEndY - touchStartY;
+                
+                // Only process if it's primarily a horizontal swipe
+                if (Math.abs(diffX) > Math.abs(diffY) * 1.5) {
+                    // Check if swipe started from left edge
+                    if (touchStartX < swipeAreaWidth) {
+                        // Right swipe to open sidebar
+                        if (diffX > swipeThreshold && !sidebar.classList.contains('mobile-open')) {
+                            toggleSidebar();
+                        }
+                        // Left swipe to close sidebar (if sidebar is open)
+                        else if (diffX < -swipeThreshold && sidebar.classList.contains('mobile-open')) {
                             toggleSidebar();
                         }
                     }
                 }
-            });
+                
+                // Reset touch coordinates
+                touchStartX = 0;
+                touchStartY = 0;
+                touchEndX = 0;
+                touchEndY = 0;
+                isSwiping = false;
+            }
+            
+            // Add touch event listeners to the main content area
+            const mainContent = document.getElementById('mainContent');
+            if (mainContent) {
+                mainContent.addEventListener('touchstart', handleTouchStart, { passive: true });
+                mainContent.addEventListener('touchmove', handleTouchMove, { passive: false });
+                mainContent.addEventListener('touchend', handleTouchEnd, { passive: true });
+            }
             
             // Initialize everything
             await initUserData();
