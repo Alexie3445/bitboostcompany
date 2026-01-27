@@ -11,6 +11,8 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    <!-- Cloudinary Upload Widget -->
+    <script src="https://upload-widget.cloudinary.com/global/all.js" type="text/javascript"></script>
     <style>
         * {
             margin: 0;
@@ -117,6 +119,65 @@
         .user-info {
             padding: 0 15px;
             margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .user-avatar-container {
+            position: relative;
+            width: 80px;
+            height: 80px;
+            margin-bottom: 15px;
+        }
+        
+        .user-avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary);
+            background-color: var(--dark-bg);
+        }
+        
+        .avatar-placeholder {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 32px;
+            font-weight: 600;
+            border: 3px solid var(--primary);
+        }
+        
+        .avatar-upload-btn {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 28px;
+            height: 28px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            border: 2px solid var(--card-bg);
+            transition: all 0.2s;
+        }
+        
+        .avatar-upload-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+        
+        .avatar-upload-btn i {
+            font-size: 12px;
         }
         
         .user-info h1 {
@@ -124,11 +185,13 @@
             color: var(--text-primary);
             margin-bottom: 4px;
             font-weight: 600;
+            text-align: center;
         }
         
         .user-info p {
             color: var(--text-secondary);
             font-size: 12px;
+            text-align: center;
         }
         
         .main-menu, .other-menu {
@@ -626,6 +689,78 @@
             transform: translateY(-1px);
         }
         
+        /* Profile Picture Upload */
+        .profile-picture-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .profile-picture-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin-bottom: 16px;
+        }
+        
+        .profile-picture {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--primary);
+            background-color: var(--dark-bg);
+        }
+        
+        .profile-picture-placeholder {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 48px;
+            font-weight: 600;
+            border: 4px solid var(--primary);
+        }
+        
+        .picture-upload-btn {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            width: 36px;
+            height: 36px;
+            background: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+            border: 2px solid var(--card-bg);
+            transition: all 0.2s;
+        }
+        
+        .picture-upload-btn:hover {
+            background: var(--primary-dark);
+            transform: scale(1.1);
+        }
+        
+        .picture-upload-btn i {
+            font-size: 16px;
+        }
+        
+        .profile-picture-info {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+        
         /* Transaction History */
         .transaction-table {
             background-color: var(--card-bg);
@@ -730,15 +865,54 @@
             font-size: 16px;
         }
         
-        .mobile-header .user-short {
-            color: var(--text-primary);
+        .mobile-header-avatar {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary);
+        }
+        
+        .mobile-header-placeholder {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
             font-weight: 600;
-            font-size: 13px;
-            background: rgba(59, 130, 246, 0.2);
-            padding: 5px 10px;
-            border-radius: 6px;
-            min-width: 35px;
-            text-align: center;
+            font-size: 14px;
+            border: 2px solid var(--primary);
+        }
+        
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            display: none;
+        }
+        
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         
         /* Mobile Styles */
@@ -981,6 +1155,72 @@
         }
     </script>
 
+    <!-- Cloudinary Configuration -->
+    <script>
+        // Cloudinary Configuration
+        const cloudinaryConfig = {
+            cloudName: 'dzy5eio5y', // Replace with your Cloudinary cloud name
+            apiKey: '624631155753264', // Replace with your Cloudinary API key
+            uploadPreset: 'bitboost' // Replace with your Cloudinary upload preset
+        };
+        
+        // Function to initialize Cloudinary upload widget
+        function initCloudinaryWidget(userId, callback) {
+            return cloudinary.createUploadWidget(
+                {
+                    cloudName: cloudinaryConfig.cloudName,
+                    uploadPreset: cloudinaryConfig.uploadPreset,
+                    sources: ['local', 'camera', 'url'],
+                    multiple: false,
+                    maxFileSize: 2000000, // 2MB
+                    clientAllowedFormats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+                    maxImageWidth: 800,
+                    maxImageHeight: 800,
+                    cropping: true,
+                    croppingAspectRatio: 1,
+                    croppingDefaultSelectionRatio: 0.9,
+                    showSkipCropButton: false,
+                    folder: `profile_pictures/${userId}`,
+                    publicId: `profile_${Date.now()}`,
+                    tags: ['profile', 'avatar'],
+                    context: {
+                        alt: `Profile picture for user ${userId}`
+                    },
+                    styles: {
+                        palette: {
+                            window: "#1e293b",
+                            windowBorder: "#334155",
+                            tabIcon: "#3b82f6",
+                            menuIcons: "#3b82f6",
+                            textDark: "#0f172a",
+                            textLight: "#f8fafc",
+                            link: "#3b82f6",
+                            action: "#3b82f6",
+                            inactiveTabIcon: "#94a3b8",
+                            error: "#ef4444",
+                            inProgress: "#3b82f6",
+                            complete: "#10b981",
+                            sourceBg: "#0f172a"
+                        },
+                        fonts: {
+                            default: null,
+                            "'Segoe UI', system-ui, -apple-system, sans-serif": {
+                                url: null,
+                                active: true
+                            }
+                        }
+                    }
+                },
+                callback
+            );
+        }
+    </script>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="loading-spinner"></div>
+    </div>
+
     <!-- Mobile Menu Toggle -->
     <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Toggle menu">
         <span></span>
@@ -992,9 +1232,9 @@
     <div class="mobile-header">
         <div class="logo">
             <i class="fas fa-rocket"></i>
-            <span>bitboost-investment</span>
+           
         </div>
-        <div class="user-short" id="userInitials">U</div>
+        <div id="mobileHeaderAvatar" class="mobile-header-placeholder">U</div>
     </div>
     
     <!-- Mobile Search Bar -->
@@ -1013,11 +1253,18 @@
         <div class="logo-area">
             <div class="logo">
                 <i class="fas fa-rocket"></i>
-                <span>bitboost-investment </span>
+                
             </div>
         </div>
         
         <div class="user-info">
+            <div class="user-avatar-container">
+                <img id="userAvatar" class="user-avatar" alt="User Avatar" style="display: none;">
+                <div id="userAvatarPlaceholder" class="avatar-placeholder">U</div>
+                <div class="avatar-upload-btn" id="avatarUploadBtn">
+                    <i class="fas fa-camera"></i>
+                </div>
+            </div>
             <h1 id="userGreeting">Hello! Loading...</h1>
             <p>Welcome back to your dashboard</p>
         </div>
@@ -1092,38 +1339,7 @@
         <!-- Dashboard Section (Default Active) -->
         <div id="dashboard" class="content-section active">
             <div class="stats-grid">
-                <div class="stat-card">
-                    <h3>Total Withdrawal</h3>
-                    <div class="stat-amount" id="totalWithdrawal">$0.00</div>
-                    <div class="stat-desc">All received bonuses</div>
-                    <div class="progress-container">
-                        <div class="progress-label">
-                            <span>Current</span>
-                            <span>Goal: $3,000</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill withdrawal" style="width: 0%" id="withdrawalProgress"></div>
-                        </div>
-                    </div>
-                    <div class="stat-goal">Progress: 0% of target</div>
-                </div>
-                
-                <div class="stat-card">
-                    <h3>Available Balance</h3>
-                    <div class="stat-amount" id="availableBalance">$0.00</div>
-                    <div class="stat-desc">Your withdrawable balance</div>
-                    <div class="progress-container">
-                        <div class="progress-label">
-                            <span>Current</span>
-                            <span>Goal: $50,000</span>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill balance" style="width: 0%" id="balanceProgress"></div>
-                        </div>
-                    </div>
-                    <div class="stat-goal">Progress: 0% of target</div>
-                </div>
-                
+
                 <div class="stat-card">
                     <h3>Active Investment</h3>
                     <div class="stat-amount" id="activeInvestment">$0.00</div>
@@ -1139,7 +1355,24 @@
                     </div>
                     <div class="stat-goal">Progress: 0% of target</div>
                 </div>
-                
+
+                <div class="stat-card">
+                    <h3>Available Balance</h3>
+                    <div class="stat-amount" id="availableBalance">$0.00</div>
+                    <div class="stat-desc">Your withdrawable balance</div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Current</span>
+                            <span>Goal: $500,000</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill balance" style="width: 0%" id="balanceProgress"></div>
+                        </div>
+                    </div>
+                    <div class="stat-goal">Progress: 0% of target</div>
+                </div>
+
+
                 <div class="stat-card">
                     <h3>Total Bonuses</h3>
                     <div class="stat-amount" id="totalBonuses">$0.00</div>
@@ -1147,7 +1380,7 @@
                     <div class="progress-container">
                         <div class="progress-label">
                             <span>Current</span>
-                            <span>Goal: $1,000</span>
+                            <span>Goal: $50,000</span>
                         </div>
                         <div class="progress-bar">
                             <div class="progress-fill bonus" style="width: 0%" id="bonusProgress"></div>
@@ -1155,6 +1388,28 @@
                     </div>
                     <div class="stat-goal">Progress: 0% of target</div>
                 </div>
+
+                <div class="stat-card">
+                    <h3>Total Withdrawal</h3>
+                    <div class="stat-amount" id="totalWithdrawal">$0.00</div>
+                    <div class="stat-desc">All received bonuses</div>
+                    <div class="progress-container">
+                        <div class="progress-label">
+                            <span>Current</span>
+                           
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill withdrawal" style="width: 0%" id="withdrawalProgress"></div>
+                        </div>
+                    </div>
+                    <div class="stat-goal">Progress: 0% of target</div>
+                </div>
+                
+              
+                
+             
+                
+             
             </div>
             
             <!-- TradingView Chart -->
@@ -1422,6 +1677,21 @@
                 <h2>General Information</h2>
                 <p>You can help us, by filling your data, create you a much better experience using our website.</p>
                 
+                <!-- Profile Picture Section -->
+                <div class="profile-picture-section">
+                    <div class="profile-picture-container">
+                        <img id="profilePicture" class="profile-picture" alt="Profile Picture" style="display: none;">
+                        <div id="profilePicturePlaceholder" class="profile-picture-placeholder">U</div>
+                        <div class="picture-upload-btn" id="profileUploadBtn">
+                            <i class="fas fa-camera"></i>
+                        </div>
+                    </div>
+                    <div class="profile-picture-info">
+                        Click the camera icon to upload a profile picture<br>
+                        Recommended size: 400x400px, max 2MB
+                    </div>
+                </div>
+                
                 <h3 style="margin-bottom: 16px; color: var(--text-secondary); font-size: 15px;">Profile Settings</h3>
                 
                 <div class="form-group">
@@ -1655,10 +1925,14 @@
             const marketItems = document.querySelectorAll('.market-item');
             const tvActionBtns = document.querySelectorAll('.tv-action-btn');
             const currentPairElement = document.getElementById('currentPair');
+            const loadingOverlay = document.getElementById('loadingOverlay');
             
             // User elements
             const userGreeting = document.getElementById('userGreeting');
-            const userInitials = document.getElementById('userInitials');
+            const userAvatar = document.getElementById('userAvatar');
+            const userAvatarPlaceholder = document.getElementById('userAvatarPlaceholder');
+            const mobileHeaderAvatar = document.getElementById('mobileHeaderAvatar');
+            const avatarUploadBtn = document.getElementById('avatarUploadBtn');
             const fullNameInput = document.getElementById('fullName');
             const emailInput = document.getElementById('email');
             const phoneInput = document.getElementById('phone');
@@ -1666,6 +1940,11 @@
             const accountIdInput = document.getElementById('accountId');
             const btcAddressInput = document.getElementById('btcAddress');
             const withdrawWalletInput = document.getElementById('withdrawWallet');
+            
+            // Profile picture elements
+            const profilePicture = document.getElementById('profilePicture');
+            const profilePicturePlaceholder = document.getElementById('profilePicturePlaceholder');
+            const profileUploadBtn = document.getElementById('profileUploadBtn');
             
             // Balance elements
             const totalWithdrawalEl = document.getElementById('totalWithdrawal');
@@ -1685,6 +1964,9 @@
             const transactionBody = document.getElementById('transactionBody');
             const noTransactions = document.getElementById('noTransactions');
             
+            // Cloudinary widget variable
+            let cloudinaryWidget = null;
+            
             // Variables for touch handling
             let touchStartX = 0;
             let touchStartY = 0;
@@ -1697,6 +1979,16 @@
             // Check if mobile view
             function isMobileView() {
                 return window.innerWidth <= 768;
+            }
+            
+            // Show loading overlay
+            function showLoading() {
+                loadingOverlay.style.display = 'flex';
+            }
+            
+            // Hide loading overlay
+            function hideLoading() {
+                loadingOverlay.style.display = 'none';
             }
             
             // Initialize TradingView Chart
@@ -1855,6 +2147,183 @@
                 }
             }
             
+            // Load profile picture from Cloudinary
+            async function loadProfilePicture(user) {
+                try {
+                    if (!db) {
+                        console.error('Firestore not initialized');
+                        return;
+                    }
+                    
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        
+                        if (userData.profilePicture) {
+                            // Update all avatar images with Cloudinary URL
+                            userAvatar.src = userData.profilePicture;
+                            userAvatar.style.display = 'block';
+                            userAvatarPlaceholder.style.display = 'none';
+                            
+                            profilePicture.src = userData.profilePicture;
+                            profilePicture.style.display = 'block';
+                            profilePicturePlaceholder.style.display = 'none';
+                            
+                            // Update mobile header
+                            mobileHeaderAvatar.innerHTML = `<img src="${userData.profilePicture}" class="mobile-header-avatar" alt="Profile">`;
+                            
+                            console.log('Profile picture loaded successfully from Cloudinary');
+                        } else {
+                            // No profile picture found, use placeholder
+                            console.log('No profile picture found, using placeholder');
+                            userAvatar.style.display = 'none';
+                            userAvatarPlaceholder.style.display = 'flex';
+                            
+                            profilePicture.style.display = 'none';
+                            profilePicturePlaceholder.style.display = 'flex';
+                            
+                            // Update mobile header placeholder
+                            const names = fullNameInput.value.split(' ');
+                            const initials = names.length >= 2 
+                                ? (names[0].charAt(0) + names[1].charAt(0)).toUpperCase()
+                                : names[0].substring(0, 2).toUpperCase();
+                            mobileHeaderAvatar.innerHTML = `<div class="mobile-header-placeholder">${initials}</div>`;
+                        }
+                    }
+                } catch (error) {
+                    console.error('Error loading profile picture:', error);
+                    // Fall back to placeholder
+                    userAvatar.style.display = 'none';
+                    userAvatarPlaceholder.style.display = 'flex';
+                    
+                    profilePicture.style.display = 'none';
+                    profilePicturePlaceholder.style.display = 'flex';
+                }
+            }
+            
+            // Initialize Cloudinary upload widget
+            function initCloudinaryUploadWidget(user) {
+                if (typeof cloudinary === 'undefined') {
+                    console.error('Cloudinary widget not loaded');
+                    alert('Cloudinary upload service is not available. Please try again later.');
+                    return null;
+                }
+                
+                try {
+                    const widget = cloudinary.createUploadWidget(
+                        {
+                            cloudName: cloudinaryConfig.cloudName,
+                            uploadPreset: cloudinaryConfig.uploadPreset,
+                            sources: ['local', 'camera', 'url'],
+                            multiple: false,
+                            maxFileSize: 2000000, // 2MB
+                            clientAllowedFormats: ['jpg', 'jpeg', 'png', 'gif', 'webp'],
+                            maxImageWidth: 800,
+                            maxImageHeight: 800,
+                            cropping: true,
+                            croppingAspectRatio: 1,
+                            croppingDefaultSelectionRatio: 0.9,
+                            showSkipCropButton: false,
+                            folder: `profile_pictures/${user.uid}`,
+                            publicId: `profile_${Date.now()}`,
+                            tags: ['profile', 'avatar'],
+                            context: {
+                                alt: `Profile picture for user ${user.uid}`
+                            },
+                            styles: {
+                                palette: {
+                                    window: "#1e293b",
+                                    windowBorder: "#334155",
+                                    tabIcon: "#3b82f6",
+                                    menuIcons: "#3b82f6",
+                                    textDark: "#0f172a",
+                                    textLight: "#f8fafc",
+                                    link: "#3b82f6",
+                                    action: "#3b82f6",
+                                    inactiveTabIcon: "#94a3b8",
+                                    error: "#ef4444",
+                                    inProgress: "#3b82f6",
+                                    complete: "#10b981",
+                                    sourceBg: "#0f172a"
+                                },
+                                fonts: {
+                                    default: null,
+                                    "'Segoe UI', system-ui, -apple-system, sans-serif": {
+                                        url: null,
+                                        active: true
+                                    }
+                                }
+                            }
+                        },
+                        (error, result) => {
+                            if (!error && result && result.event === "success") {
+                                console.log('Cloudinary upload result:', result);
+                                
+                                // Get the uploaded image URL
+                                const imageUrl = result.info.secure_url;
+                                console.log('Uploaded image URL:', imageUrl);
+                                
+                                // Save the Cloudinary URL to Firestore
+                                saveProfilePictureToFirestore(user.uid, imageUrl);
+                                
+                                // Update all avatar images
+                                userAvatar.src = imageUrl;
+                                userAvatar.style.display = 'block';
+                                userAvatarPlaceholder.style.display = 'none';
+                                
+                                profilePicture.src = imageUrl;
+                                profilePicture.style.display = 'block';
+                                profilePicturePlaceholder.style.display = 'none';
+                                
+                                // Update mobile header
+                                mobileHeaderAvatar.innerHTML = `<img src="${imageUrl}" class="mobile-header-avatar" alt="Profile">`;
+                                
+                                // Hide loading
+                                hideLoading();
+                                
+                                alert('Profile picture updated successfully!');
+                            } else if (error) {
+                                console.error('Cloudinary upload error:', error);
+                                hideLoading();
+                                alert('Error uploading profile picture: ' + error.message);
+                            } else if (result && result.event === "close") {
+                                console.log('Cloudinary widget closed');
+                                hideLoading();
+                            } else if (result && result.event === "queues-start") {
+                                console.log('Upload started');
+                                showLoading();
+                            }
+                        }
+                    );
+                    
+                    return widget;
+                } catch (error) {
+                    console.error('Error creating Cloudinary widget:', error);
+                    alert('Error initializing upload widget. Please try again.');
+                    return null;
+                }
+            }
+            
+            // Save profile picture URL to Firestore
+            async function saveProfilePictureToFirestore(userId, imageUrl) {
+                try {
+                    if (!db) {
+                        console.error('Firestore not initialized');
+                        return;
+                    }
+                    
+                    await db.collection('users').doc(userId).update({
+                        profilePicture: imageUrl,
+                        updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                    
+                    console.log('Profile picture URL saved to Firestore');
+                } catch (error) {
+                    console.error('Error saving profile picture URL to Firestore:', error);
+                }
+            }
+            
             // Initialize user data from Firebase
             async function initUserData() {
                 try {
@@ -1866,12 +2335,20 @@
                         const fullName = userData.fullName || userData.firstName + ' ' + userData.lastName || 'User';
                         userGreeting.textContent = `Hello! ${fullName.toUpperCase()}`;
                         
-                        // Set initials for mobile header
+                        // Set initials for placeholders
                         const names = fullName.split(' ');
                         const initials = names.length >= 2 
                             ? (names[0].charAt(0) + names[1].charAt(0)).toUpperCase()
                             : names[0].substring(0, 2).toUpperCase();
-                        userInitials.textContent = initials;
+                        
+                        userAvatarPlaceholder.textContent = initials;
+                        profilePicturePlaceholder.textContent = initials;
+                        
+                        // Update mobile header with initials
+                        mobileHeaderAvatar.innerHTML = `<div class="mobile-header-placeholder">${initials}</div>`;
+                        
+                        // Load profile picture if exists
+                        await loadProfilePicture(user);
                         
                         // Set profile form values
                         fullNameInput.value = fullName || '';
@@ -1891,13 +2368,17 @@
                     } else {
                         // No user data found, use defaults
                         userGreeting.textContent = 'Welcome!';
-                        userInitials.textContent = 'U';
+                        userAvatarPlaceholder.textContent = 'U';
+                        profilePicturePlaceholder.textContent = 'U';
+                        mobileHeaderAvatar.innerHTML = '<div class="mobile-header-placeholder">U</div>';
                         await initBalances(user); // Pass the user object
                     }
                 } catch (error) {
                     console.error('Error initializing user data:', error);
                     userGreeting.textContent = 'Welcome!';
-                    userInitials.textContent = 'U';
+                    userAvatarPlaceholder.textContent = 'U';
+                    profilePicturePlaceholder.textContent = 'U';
+                    mobileHeaderAvatar.innerHTML = '<div class="mobile-header-placeholder">U</div>';
                     // Try to initialize with user object if available
                     try {
                         const user = await checkAuth();
@@ -2235,6 +2716,42 @@
                 });
             });
             
+            // Avatar upload functionality
+            avatarUploadBtn.addEventListener('click', async () => {
+                const user = auth.currentUser;
+                if (!user) {
+                    alert('You must be logged in to upload a profile picture.');
+                    return;
+                }
+                
+                // Initialize or reuse Cloudinary widget
+                if (!cloudinaryWidget) {
+                    cloudinaryWidget = initCloudinaryUploadWidget(user);
+                }
+                
+                if (cloudinaryWidget) {
+                    cloudinaryWidget.open();
+                }
+            });
+            
+            // Profile picture upload functionality
+            profileUploadBtn.addEventListener('click', async () => {
+                const user = auth.currentUser;
+                if (!user) {
+                    alert('You must be logged in to upload a profile picture.');
+                    return;
+                }
+                
+                // Initialize or reuse Cloudinary widget
+                if (!cloudinaryWidget) {
+                    cloudinaryWidget = initCloudinaryUploadWidget(user);
+                }
+                
+                if (cloudinaryWidget) {
+                    cloudinaryWidget.open();
+                }
+            });
+            
             // Form button functionality
             document.getElementById('reinvestBtn').addEventListener('click', function() {
                 const coin = document.getElementById('coin').value;
@@ -2286,11 +2803,18 @@
                     // Update greeting
                     userGreeting.textContent = `Hello! ${fullName.toUpperCase()}`;
                     
-                    // Update mobile header initials
+                    // Update placeholder initials
                     const initials = names.length >= 2 
                         ? (names[0].charAt(0) + names[1].charAt(0)).toUpperCase()
                         : names[0].substring(0, 2).toUpperCase();
-                    userInitials.textContent = initials;
+                    
+                    userAvatarPlaceholder.textContent = initials;
+                    profilePicturePlaceholder.textContent = initials;
+                    
+                    // Update mobile header if no picture is set
+                    if (!userAvatar.style.display || userAvatar.style.display === 'none') {
+                        mobileHeaderAvatar.innerHTML = `<div class="mobile-header-placeholder">${initials}</div>`;
+                    }
                     
                     // Update withdrawal wallet if BTC address was added
                     if (btcAddress) {
